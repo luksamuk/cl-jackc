@@ -5,13 +5,16 @@
 
 (defpackage #:cl-jackc
   (:use #:cl)
-  (:export #:compile-exec)
+  (:export #:if-let
+	   #:compile-exec)
   (:documentation
    "Default interface for compiler. Exports procedures so the user can
 interact with the compiler."))
 
 (defpackage #:jackc-reader
-  (:use #:cl)
+  (:use #:cl #:cl-jackc)
+  (:export #:find-files
+	   #:read-files)
   (:documentation
    "Takes compilation arguments and configuration, passed by the
 user. For each given file, generates a file stream and passes it to
