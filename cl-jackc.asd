@@ -1,4 +1,7 @@
 ;;;; cl-jackc.asd
+;;;; Part of cl-jackc.
+;;;; Copyright (c) 2019 Lucas Vieira
+;;;; This project is distributed under the MIT License.
 
 (asdf:defsystem #:cl-jackc
   :description "Jack compiler for the nand2tetris Hack platform."

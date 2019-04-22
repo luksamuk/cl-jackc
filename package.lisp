@@ -1,7 +1,11 @@
 ;;;; package.lisp
+;;;; Part of cl-jackc.
+;;;; Copyright (c) 2019 Lucas Vieira
+;;;; This project is distributed under the MIT License.
 
 (defpackage #:cl-jackc
   (:use #:cl)
+  (:export #:compile-exec)
   (:documentation
    "Default interface for compiler. Exports procedures so the user can
 interact with the compiler."))
