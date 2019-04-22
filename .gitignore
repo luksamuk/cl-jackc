@@ -1,0 +1,8 @@
+*~
+#*#*
+*.asm
+*.hack
+system-index.txt
+quicklisp/
+qlfile.lock
+

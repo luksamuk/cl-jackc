@@ -1,0 +1,70 @@
+#+TITLE: cl-jackc
+#+AUTHOR: Lucas Vieira
+#+EMAIL: lucasvieira@protonmail.com
+
+* Introduction
+This is a compiler for the Jack language, the high-level language of
+the Hack platform, an exercise of the book The Elements of Computing
+Systems, by Nisan and Schocken.
+
+The Jack language is introduced on Chapter 9, and Chapters 10 and 11
+are dedicated to building a simple compiler for such language, which
+is what this project is.
+
+This compiler was completely written in Common Lisp.
+
+*Notice that this project is currently aiming to be Chapter-10-compliant-only.*
+This means that the compiler is, for now, only fit for analyzing ~.jack~
+files and outputting XML files for inspection.
+
+* Modularization
+This project takes a different approach when compared to other
+projects of the book ([[https://github.com/luksamuk/cl-hackasm][cl-hackasm]], [[https://github.com/luksamuk/cl-hackvmtr][cl-hackvmtr]]), with respect to its
+organization. The book talks about compiler modules, and so the
+project is organized in modules as well, though not strictly as
+suggested.
+
+Each one of the project's packages correspond to a certain module of
+the compiler. When doing this, instead of having separate binaries, we
+just make sure that the packages are minimalistic and serve their
+purpose explicitly. The user shall only interface with a single
+package, which depends on the other modules, and works as a frontend.
+
+** Module listing
+
+- ~cl-jackc~
+  Default interface for compiler. Exports procedures so the user can
+  interact with the compiler.
+- ~jackc-reader~
+  Takes compilation arguments and configuration, passed by the
+  user. For each given file, generates a file stream and passes it to
+  the analyzer.
+- ~jackc-analyzer~
+  Takes a single file stream, and invokes the tokenizer for
+  it. Redirects the tokenizer's output to the parser.
+  Relates to the /JackAnalyzer/ module, proposed in the book.
+- ~jackc-tokenizer~
+  Takes a file stream, produces an alist for it. The alist output
+  resembles the expected XML after a single analysis step.
+  Relates to the /JackTokenizer/ module, proposed in the book.
+- ~jackc-parser~
+  Takes the output of a file tokenization, and effectively compiles it
+  to one of the desired outputs (XML or VM), outputting it to console.
+  Relates to the /CompilationEngine/ module, proposed in the book.
+- ~jackc-writer~
+  Takes the console output of the parser, and writes it to the desired
+  (~.xml~ or ~.vm~) file.
+
+* Usage
+This compiler is still alpha-quality software, so it might still not
+have any user interface yet. Nevertheless, it is not ready for usage.
+
+** Qlot support
+This project uses [[https://github.com/fukamachi/qlot][qlot]], so one should be able to use this tool to
+either run or develop the compiler. However, the primary use of =qlot=
+here only involves setting up a local Quicklisp directory with SLIME
+support.
+
+* License
+This project is distributed under the MIT License.
+Copyright (c) 2019 Lucas Vieira.
