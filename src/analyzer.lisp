@@ -5,3 +5,5 @@
 
 (in-package #:jackc-analyzer)
 
+(defun analyze (file-stream)
+  )

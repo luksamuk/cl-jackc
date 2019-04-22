@@ -14,6 +14,7 @@
 			:components ((:file "cl-jackc")
 				     (:file "reader")
 				     (:file "analyzer")
-				     (:file "tokenizer")
+				     (:module "tokenizer"
+					      :components ((:file "grammar")))
 				     (:file "parser")
 				     (:file "writer")))))
