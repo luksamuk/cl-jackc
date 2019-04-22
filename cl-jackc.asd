@@ -7,9 +7,9 @@
   :version "0.0.1"
   :serial t
   :components ((:file "package")
-	       (:file "cl-jackc")
                (:module "src"
-			:components ((:file "reader")
+			:components ((:file "cl-jackc")
+				     (:file "reader")
 				     (:file "analyzer")
 				     (:file "tokenizer")
 				     (:file "parser")
