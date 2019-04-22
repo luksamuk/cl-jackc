@@ -15,6 +15,8 @@
 				     (:file "reader")
 				     (:file "analyzer")
 				     (:module "tokenizer"
-					      :components ((:file "grammar")))
+					      :components ((:file "tokenizer-state")
+							   (:file "grammar")
+							   (:file "matcher")))
 				     (:file "parser")
 				     (:file "writer")))))

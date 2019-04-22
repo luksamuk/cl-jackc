@@ -27,7 +27,7 @@ the analyzer."))
 it. Redirects the tokenizer's output to the parser."))
 
 (defpackage #:jackc-tokenizer
-  (:use #:cl)
+  (:use #:cl #:cl-jackc)
   (:documentation
    "Takes a file stream, produces an alist for it. The alist output
 resembles the expected XML after a single analysis step."))
