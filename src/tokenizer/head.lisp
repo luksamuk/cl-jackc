@@ -92,7 +92,24 @@
       (parse-integer (coerce int-list 'string)))))
 
 (defmethod head-match ((head tokenizer-head) (target (eql :string-constant)))
-  )
+  (head-ff-nonseparator head)
+  (let ((str-list nil)
+	(white-chars '(#\Newline #\Tab #\Linefeed #\Return))
+	(syntax-error nil))
+    (head-checkpoint (head)
+      (let ((buffer (head-next-char head)))
+	(when (char= buffer #\")
+	  (loop while t
+	     do (setf buffer (head-next-char head))
+	     if (member buffer white-chars)
+	     do (progn (setf syntax-error t) ; placeholder?
+		       (return))
+	     else if (char= buffer #\")
+	     do (return)
+	     else do (setf str-list (append str-list (list buffer))))))
+      (not syntax-error))
+    (unless syntax-error
+      (coerce (cons #\" (append str-list (list #\"))) 'string))))
 
 (defmethod head-match ((head tokenizer-head) (target (eql :identifier)))
   )
