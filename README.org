@@ -32,26 +32,45 @@ package, which depends on the other modules, and works as a frontend.
 
 ** Module listing
 
+- ~jackc-utils~
+
+  Utilities and miscellaneous structures for all other compiler
+  modules, usually related to language extension.
+
 - ~cl-jackc~
+
   Default interface for compiler. Exports procedures so the user can
   interact with the compiler.
+
 - ~jackc-reader~
+
   Takes compilation arguments and configuration, passed by the
   user. For each given file, generates a file stream and passes it to
   the analyzer.
+
 - ~jackc-analyzer~
+
   Takes a single file stream, and invokes the tokenizer for
   it. Redirects the tokenizer's output to the parser.
+  
   Relates to the /JackAnalyzer/ module, proposed in the book.
+
 - ~jackc-tokenizer~
+
   Takes a file stream, produces an alist for it. The alist output
   resembles the expected XML after a single analysis step.
+  
   Relates to the /JackTokenizer/ module, proposed in the book.
+
 - ~jackc-parser~
+
   Takes the output of a file tokenization, and effectively compiles it
   to one of the desired outputs (XML or VM), outputting it to console.
+  
   Relates to the /CompilationEngine/ module, proposed in the book.
+
 - ~jackc-writer~
+
   Takes the console output of the parser, and writes it to the desired
   (~.xml~ or ~.vm~) file.
 
