@@ -5,9 +5,6 @@
 
 (in-package #:jackc-tokenizer)
 
-(defvar *quantifiers*   '(:or :many :maybe))
-(defvar *builtin-rules* '(:integer-constant :string-constant :identifier))
-
 ;; (defun match-compare (terminal-rule expected-token)
 ;;   (let ((token (next-token *tokenizer-head*)))
 ;;     (if (string= token expected-token)
@@ -54,4 +51,3 @@
 	 (if (member grammar-rule *builtin-rules*)
 	     (list :check grammar-rule)
 	     (cons grammar-rule (match (grammar-lookup grammar-rule)))))))
-

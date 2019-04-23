@@ -112,6 +112,9 @@
     (:keyword-constant  ((:or (:keyword "true") (:keyword "false")
 			      (:keyword "null") (:keyword "this"))))))
 
+(defvar *quantifiers*   '(:or :many :maybe))
+(defvar *builtin-rules* '(:integer-constant :string-constant :identifier))
+
 ;;;; Interpreting grammars:
 ;;; (:or       . statements)
 ;;; (:many     . statements)
