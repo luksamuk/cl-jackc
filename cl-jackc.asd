@@ -12,7 +12,8 @@
   :depends-on (#:split-sequence)
   :components ((:file "package")
                (:module "src"
-			:components ((:file "cl-jackc")
+			:components ((:file "utils")
+				     (:file "cl-jackc")
 				     (:file "reader")
 				     (:file "analyzer")
 				     (:module "tokenizer"

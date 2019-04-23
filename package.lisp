@@ -3,16 +3,22 @@
 ;;;; Copyright (c) 2019 Lucas Vieira
 ;;;; This project is distributed under the MIT License.
 
-(defpackage #:cl-jackc
+(defpackage #:jackc-utils
   (:use #:cl)
-  (:export #:if-let
-	   #:compile-exec)
+  (:export #:if-let)
+  (:documentation
+   "Utilities and miscellaneous structures for all other compiler modules,
+usually related to language extension."))
+
+(defpackage #:cl-jackc
+  (:use #:cl #:jackc-utils)
+  (:export #:compile-exec)
   (:documentation
    "Default interface for compiler. Exports procedures so the user can
 interact with the compiler."))
 
 (defpackage #:jackc-reader
-  (:use #:cl #:cl-jackc)
+  (:use #:cl #:jackc-utils)
   (:export #:find-files
 	   #:read-files)
   (:documentation
@@ -27,7 +33,7 @@ the analyzer."))
 it. Redirects the tokenizer's output to the parser."))
 
 (defpackage #:jackc-tokenizer
-  (:use #:cl #:cl-jackc #:split-sequence)
+  (:use #:cl #:jackc-utils #:split-sequence)
   (:documentation
    "Takes a file stream, produces an alist for it. The alist output
 resembles the expected XML after a single analysis step."))

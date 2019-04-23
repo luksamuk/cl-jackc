@@ -5,15 +5,6 @@
 
 (in-package #:cl-jackc)
 
-(defmacro if-let (binding consequent alternative)
-  "Binds a BINDING. If the bound symbol has non-false value, executes
-CONSEQUENT; otherwise, executes ALTERNATIVE."
-  (destructuring-bind ((sym val)) binding
-    `(let ((,sym ,val))
-       (if ,sym
-	   ,consequent
-	   ,alternative))))
-
 (defun compile-exec (file-or-dir &key (analyze t)) ; TODO: default :analyze to nil
   "Compiles a file or directory. Output files will be written in the
 same directory as the Jack source files.
