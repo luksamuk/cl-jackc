@@ -16,7 +16,11 @@ usually related to language extension."))
 	   #:syntax-error
 	   #:unexpected-eof
 	   #:integer-overflow
-	   #:print-object)
+	   #:print-object
+	   #:file-not-found-condition
+	   #:syntax-error-condition
+	   #:unexpected-eof-condition
+	   #:integer-overflow-condition)
   (:documentation
    "Definitions for compiler-related conditions."))
 

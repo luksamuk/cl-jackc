@@ -47,3 +47,20 @@
 	  (blown-number object)))
 
 
+;; Helper functions for throwing conditions
+
+(defun file-not-found-condition (filename)
+  (error 'file-not-found :filename filename))
+
+(defun syntax-error-condition (line-number column-number)
+  (error 'syntax-error :line line-number :column column-number))
+
+(defun unexpected-eof-condition ()
+  (error 'unexpected-eof))
+
+(defun integer-overflow-condition (line-number column-number blown-number)
+  (error 'integer-overflow
+	 :line line-number
+	 :column column-number
+	 :number blown-number))
+
