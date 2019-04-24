@@ -98,10 +98,11 @@
       ;; TODO: A number > 32767 should be syntax error
       (parse-integer (coerce int-list 'string)))))
 
+(defvar *string-constant-white-chars* '(#\Newline #\Linefeed #\Return))
+
 (defmethod head-match ((head tokenizer-head) (target (eql :string-constant)))
   (head-ff-nonseparator head)
   (let ((str-list nil)
-	(white-chars '(#\Newline #\Linefeed #\Return))
 	(syntax-error nil))
     (head-checkpoint (head)
       (let ((buffer (head-next-char head)))
@@ -109,23 +110,26 @@
 	    (setf syntax-error t)
 	    (loop while t
 	       do (setf buffer (head-next-char head))
-	       if (member buffer white-chars)
+	       if (member buffer *string-constant-white-chars*)
 	       do (progn (setf syntax-error t) ; placeholder?
 			 (return))
 	       else if (char= buffer #\")
 	       do (return)
-	       else do (setf str-list (append str-list (list buffer))))))
+	       else do (setf str-list (append str-list
+					      (list buffer))))))
       (not syntax-error))
     (unless syntax-error
       (coerce (cons #\" (append str-list (list #\"))) 'string))))
 
+(defvar *identifier-match-end-chars*
+  (append '(#\Space #\Newline #\Tab #\Linefeed #\Return)
+	  (mapcar (lambda (x)
+		    (car (coerce x 'list)))
+		  (cdar (grammar-lookup :symbol)))))
+
 (defmethod head-match ((head tokenizer-head) (target (eql :identifier)))
   (head-ff-nonseparator head)
   (let ((ident-list nil)
-	(match-end-chars (append '(#\Space #\Newline #\Tab #\Linefeed #\Return)
-				 (mapcar (lambda (x)
-					   (car (coerce x 'list)))
-					 (cdar (grammar-lookup :symbol)))))
 	(syntax-error nil))
     (head-checkpoint (head)
       (let ((buffer (head-next-char head)))
@@ -135,7 +139,7 @@
 					    (list buffer)))
 		   (loop while t
 		      do (setf buffer (head-next-char head))
-		      if (member buffer match-end-chars)
+		      if (member buffer *identifier-match-end-chars*)
 		      do (progn (setf (head-position head)
 				      (1- (head-position head)))
 				(return))

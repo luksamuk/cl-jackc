@@ -22,7 +22,7 @@
     ;; :string-constant
     ;;   (starts and begins with #\", non-space whitespace inbetween)
     ;; :identifier
-    ;;   (does not start with number, reads until whitespace or symbol
+    ;;   (does not start with number, reads until whitespace or symbol)
     
     ;;; Program structure
     (:class             ((:keyword "class")
