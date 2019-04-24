@@ -101,11 +101,30 @@ This projects uses [[https://github.com/fukamachi/rove][rove]] for unit testing.
 called ~cl-jackc/test~ is provided, which includes a number of test
 suites for parts of the compiler.
 
+Tests also assume that you have ~qlot~ and ~roswell~ installed.
+
+** Running tests automatically
+
+A ~run-tests.sh~ script is included on the repository root, and will
+automatically run all tests when invoked. 
+
+** Running tests manually, from Slime
+
+If you are hacking the project's files, and you have a Slime REPL open
+(under ~qlot~; for that, see ~qlot~'s documentation), just invoke ~rove~ for
+the testing system:
+
+#+begin_src lisp
+(ql:quickload :cl-jackc/test)
+(rove:run :cl-jackc/test)
+#+end_src
+
+** Running tests manually, from Bash
+
 Assuming that qlot is installed and configured, navigate to the
 project's root directory and open the REPL:
 
 #+begin_src bash
-cd /path/to/cl-jackc
 qlot run
 #+end_src
 
