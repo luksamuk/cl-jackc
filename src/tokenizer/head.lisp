@@ -23,8 +23,10 @@
 
 (defmethod head-next-char ((head tokenizer-head))
   (let ((charact (read-char (fstream head))))
+    (incf (column-number head))
     (when (char= charact #\Newline)
-      (incf (line-number head)))
+      (incf (line-number head))
+      (setf (column-number head) 0))
     charact))
 
 (defun whitespace-p (character)
@@ -50,12 +52,17 @@
 
 (defmacro head-checkpoint ((head) &body body)
   (let ((init-position (gensym))
+	(line-and-col (gensym))
 	(result (gensym)))
     `(let* ((,init-position (head-position ,head))
+	    (,line-and-col (cons (line-number ,head)
+				 (column-number ,head)))
 	    (,result (progn ,@body)))
        (if (not ,result)
 	   (progn
-	     (setf (head-position ,head) ,init-position)
+	     (setf (head-position ,head) ,init-position
+		   (line-number ,head)   (car ,line-and-col)
+		   (column-number ,head) (cdr ,line-and-col))
 	     nil)
 	   ,result))))
 
