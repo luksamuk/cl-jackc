@@ -119,4 +119,5 @@ the unit tests:
 
 * License
 This project is distributed under the MIT License.
+
 Copyright (c) 2019 Lucas Vieira.

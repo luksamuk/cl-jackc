@@ -15,10 +15,14 @@
     (:symbol           ((:or "{" "}" "(" ")" "[" "]" "." ","
 			     ";" "+" "-" "*" "/" "&" "|" "<"
 			     ">" "=" "~")))
-    ;; Builtin lexical elements:
+    
+    ;;; Builtin lexical elements
     ;; :integer-constant
+    ;;   (all-numeric, no whitespace inbetween, ends at whitespace or symbol)
     ;; :string-constant
+    ;;   (starts and begins with #\", non-space whitespace inbetween)
     ;; :identifier
+    ;;   (does not start with number, reads until whitespace or symbol
     
     ;;; Program structure
     (:class             ((:keyword "class")
@@ -112,23 +116,13 @@
     (:keyword-constant  ((:or (:keyword "true") (:keyword "false")
 			      (:keyword "null") (:keyword "this"))))))
 
+;;; Comment tokens
+;; Each token has a beginning token, and an end token. Comment tokens with NIL
+;; as end token expect #\Newline at end.
+(defvar *comment-tokens* '(("//") ("/*" "*/")))
+
 (defvar *quantifiers*   '(:or :many :maybe))
 (defvar *builtin-rules* '(:integer-constant :string-constant :identifier))
-
-;;;; Interpreting grammars:
-;;; (:or       . statements)
-;;; (:many     . statements)
-;;; (:maybe    . statements)
-;;; (list-stmt . statements)
-;;; (atom-stmt . statements)
-
-;;; list-stmt:
-;;; (atom-stmt . statements)
-;;; - match atom-stmt:
-;;;   => (:or, :many, :maybe): quantifiers
-;;;   => keyword such that (grammar-lookup keyword) is not nil
-;;;      - match with (grammar-lookup keyword)
-;;;   => syntax error
 
 
 (defparameter *grammar*
@@ -155,8 +149,3 @@
       (gethash keyword *grammar*)
     (declare (ignore unused))
     value))
-
-;; TODO:
-;; integer-constant-p
-;; string-constant-p
-;; identifier-p

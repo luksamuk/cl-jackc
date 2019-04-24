@@ -62,13 +62,21 @@
   (testing "line and column numbers"
     (with-new-head ((open (script-file "tokens")))
       (match-token "class")
-      (ok (and (= (line-number *the-head*) 0)
-	       (= (column-number *the-head*) 5)))
+      (ok (= (line-number *the-head*) 0))
+      (ok (= (column-number *the-head*) 5))
       (mapc (lambda (x) (match-token x))
 	    '("Bar" "{" "constructor" "Bar" "new" "(" ")" "{" "return"))
-      (ok (and (= (line-number *the-head*) 2)
-	       (= (column-number *the-head*) 14)))))
+      (ok (= (line-number *the-head*) 2))
+      (ok (= (column-number *the-head*) 14))))
   (testing "identifier"
-    (skip "Identifier support not implemented yet."))
+    (with-new-head ((open (script-file "tokens")))
+      (expected-results
+	((match-token "class")       "class")
+	((match-token :identifier)   "Bar")
+	((match-token "{")           "{")
+	((match-token "constructor") "constructor")
+	((match-token :identifier)   "Bar")
+	((match-token :identifier)   "new")
+	((match-token "(")           "("))))
   (testing "comments"
     (skip "Comment support not implemented yet.")))
