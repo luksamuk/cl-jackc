@@ -79,24 +79,28 @@
        (<= (char-code char) (char-code #\9))))
 
 ;; Match for numeric constant
+
+(defvar *integer-constant-symbols* (cdar (grammar-lookup :symbol)))
+
 (defmethod head-match ((head tokenizer-head) (target (eql :integer-constant)))
   (head-ff-nonseparator head)
-  (let ((int-list nil)
-	(symbols (cdar (grammar-lookup :symbol))))
+  (let ((int-list nil))
     (head-checkpoint (head)
       (loop while t
 	 for buffer = (head-next-char head)
 	 if (or (whitespace-p buffer)
-		(member buffer symbols))
+		(member buffer *integer-constant-symbols*))
 	 do (progn (setf (head-position head)
 			 (- (head-position head) 2))
 		   (return))
 	 else if (numeric-char-p buffer)
-	 do (setf int-list (append int-list (list buffer))))
+	 do (push buffer int-list))
       (> (list-length int-list) 0))
     (unless (null int-list)
-      ;; TODO: A number > 32767 should be syntax error
-      (parse-integer (coerce int-list 'string)))))
+      (let ((integer-value
+	     (parse-integer (coerce (reverse int-list) 'string))))
+	(when (<= integer-value 32767)
+	  integer-value)))))
 
 (defvar *string-constant-white-chars* '(#\Newline #\Linefeed #\Return))
 
@@ -111,21 +115,21 @@
 	    (loop while t
 	       do (setf buffer (head-next-char head))
 	       if (member buffer *string-constant-white-chars*)
-	       do (progn (setf syntax-error t) ; placeholder?
+	       do (progn (setf syntax-error t)
 			 (return))
 	       else if (char= buffer #\")
 	       do (return)
-	       else do (setf str-list (append str-list
-					      (list buffer))))))
+	       else do (push buffer str-list))))
       (not syntax-error))
     (unless syntax-error
-      (coerce (cons #\" (append str-list (list #\"))) 'string))))
+      (coerce (cons #\" (reverse (cons #\" str-list)))
+	      'string))))
 
 (defvar *identifier-match-end-chars*
   (append '(#\Space #\Newline #\Tab #\Linefeed #\Return)
 	  (mapcar (lambda (x)
 		    (car (coerce x 'list)))
-		  (cdar (grammar-lookup :symbol)))))
+		  *integer-constant-symbols*)))
 
 (defmethod head-match ((head tokenizer-head) (target (eql :identifier)))
   (head-ff-nonseparator head)
