@@ -54,10 +54,10 @@
   (let ((init-position (gensym))
 	(line-and-col (gensym))
 	(result (gensym)))
-    `(let* ((,init-position (head-position ,head))
-	    (,line-and-col (cons (line-number ,head)
-				 (column-number ,head)))
-	    (,result (progn ,@body)))
+    `(let ((,init-position (head-position ,head))
+	   (,line-and-col (cons (line-number ,head)
+				(column-number ,head)))
+	   (,result (progn ,@body)))
        (if (not ,result)
 	   (progn
 	     (setf (head-position ,head) ,init-position
@@ -99,8 +99,9 @@
     (unless (null int-list)
       (let ((integer-value
 	     (parse-integer (coerce (reverse int-list) 'string))))
-	(when (<= integer-value 32767)
-	  integer-value)))))
+	(if (<= integer-value 32767)
+	    integer-value
+	    (error "Integer bigger than expected")))))) ; placeholder
 
 (defvar *string-constant-white-chars* '(#\Newline #\Linefeed #\Return))
 
