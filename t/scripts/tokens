@@ -1,0 +1,5 @@
+class Bar {
+    constructor Bar new() {
+        return this;
+    }
+}

@@ -79,10 +79,43 @@ This compiler is still alpha-quality software, so it might still not
 have any user interface yet. Nevertheless, it is not ready for usage.
 
 ** Qlot support
-This project uses [[https://github.com/fukamachi/qlot][qlot]], so one should be able to use this tool to
-either run or develop the compiler. However, the primary use of =qlot=
-here only involves setting up a local Quicklisp directory with SLIME
-support.
+
+This project uses qlot for both development and unit testing, so one
+should be able to use this tool to either run or develop the
+compiler.
+
+Qlot assumes that you have [[https://github.com/roswell/roswell][Roswell]] installed, preferably running
+SBCL. To install and configure qlot, simply run:
+
+#+begin_src bash
+ros install qlot
+qlot install
+#+end_src
+
+To use qlot along with SLIME on Emacs, see [[https://github.com/fukamachi/qlot][qlot]]'s repository
+documentation.
+
+* Unit testing
+
+This projects uses [[https://github.com/fukamachi/rove][rove]] for unit testing. For using it, a system
+called ~cl-jackc/test~ is provided, which includes a number of test
+suites for parts of the compiler.
+
+Assuming that qlot is installed and configured, navigate to the
+project's root directory and open the REPL:
+
+#+begin_src bash
+cd /path/to/cl-jackc
+qlot run
+#+end_src
+
+When the Lisp REPL is opened, load the test system and use rove to run
+the unit tests:
+
+#+begin_src lisp
+(ql:quickload :cl-jackc/test)
+(rove:run :cl-jackc/test)
+#+end_src
 
 * License
 This project is distributed under the MIT License.

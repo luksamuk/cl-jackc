@@ -22,3 +22,13 @@
 							   (:file "matcher")))
 				     (:file "parser")
 				     (:file "writer")))))
+
+(asdf:defsystem #:cl-jackc/test
+  :description "Test system for cl-jackc Jack compiler"
+  :author "Lucas Vieira <lucasvieira@protonmail.com>"
+  :license "MIT"
+  :version "0.0.1"
+  :serial t
+  :depends-on (#:cl-jackc #:rove)
+  :components ((:module "t"
+			:components ((:file "test")))))
