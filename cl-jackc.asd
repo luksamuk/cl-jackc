@@ -13,6 +13,7 @@
   :components ((:file "package")
                (:module "src"
 			:components ((:file "utils")
+				     (:file "conditions")
 				     (:file "cl-jackc")
 				     (:file "reader")
 				     (:file "analyzer")

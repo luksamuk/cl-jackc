@@ -32,15 +32,19 @@ package, which depends on the other modules, and works as a frontend.
 
 ** Module listing
 
+- ~cl-jackc~
+
+  Default interface for compiler. Exports procedures so the user can
+  interact with the compiler.
+
 - ~jackc-utils~
 
   Utilities and miscellaneous structures for all other compiler
   modules, usually related to language extension.
 
-- ~cl-jackc~
+- ~jackc-conditions~
 
-  Default interface for compiler. Exports procedures so the user can
-  interact with the compiler.
+  Definitions for compiler-related conditions.
 
 - ~jackc-reader~
 
@@ -137,6 +141,7 @@ the unit tests:
 #+end_src
 
 * License
+
 This project is distributed under the MIT License.
 
 Copyright (c) 2019 Lucas Vieira.

@@ -10,6 +10,11 @@
    "Utilities and miscellaneous structures for all other compiler modules,
 usually related to language extension."))
 
+(defpackage #:jackc-conditions
+  (:use #:cl)
+  (:documentation
+   "Definitions for compiler-related conditions."))
+
 (defpackage #:cl-jackc
   (:use #:cl #:jackc-utils)
   (:export #:compile-exec)
