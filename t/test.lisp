@@ -6,6 +6,7 @@
 (defpackage #:cl-jackc/test
   (:use #:cl
 	#:jackc-tokenizer
+	#:jackc-conditions
 	#:rove))
 
 (in-package #:cl-jackc/test)
@@ -20,7 +21,7 @@
 (defmacro expected-results (&body body)
   `(progn
      ,@(loop for case in body
-	  collect `(rove:ok (equal ,(car case) ,(cadr case))))))
+	  collect `(ok (equal ,(car case) ,(cadr case))))))
 
 (defun match-token (string)
   (head-match *the-head* string))
@@ -51,6 +52,9 @@
 	((match-token "=")               "=")
 	((match-token :integer-constant) 12345)
 	((match-token ";")               ";"))))
+  (testing "integer constant overflow"
+    (with-new-head ((open (script-file "intoverflow")))
+      (ok (signals (match-token :integer-constant) 'integer-overflow))))
   (testing "string constant"
     (with-new-head ((open (script-file "strings")))
       (expected-results
