@@ -12,6 +12,11 @@ usually related to language extension."))
 
 (defpackage #:jackc-conditions
   (:use #:cl)
+  (:export #:file-not-found
+	   #:syntax-error
+	   #:unexpected-eof
+	   #:integer-overflow
+	   #:print-object)
   (:documentation
    "Definitions for compiler-related conditions."))
 
