@@ -17,13 +17,31 @@ directory, returns a list containing all the Jack files on it."
 	   nil))
 	((uiop:directory-exists-p path-string)
 	 (directory (concatenate 'string path-string "/*.jack")))
-	(t (error "Cannot open file: ~a" path-string))))
+	(t (file-not-found-condition path-string))))
+
+(defvar *error-format*
+  (concatenate 'string
+	       "~tOn file \"~a\":~&"
+	       "~t** ~a~&Unexpected condition raised. "
+	       "Bailing out.~&")
+  "Error format string for general conditions on compilation process.")
 
 (defun read-files (file-list)
-  "Dispatches a read stream for each file in FILE-LIST to the
+    "Dispatches a read stream for each file in FILE-LIST to the
 compiler's analyzer. Expects all files to be valid paths."
-  (loop for file in file-list
-     for stream = (open file)
-     ;; TODO: Call analyzer for file
-     do (format t "Opened stream ~a~&" stream)
-     do (close stream)))
+  (let ((current-stream nil)
+	(condition-raised nil))
+    (loop for file in file-list
+       do (unwind-protect
+	       (handler-case
+		   (progn (setf current-stream (open file))
+			  ;; TODO: call analyzer for file
+			  (format t "Compiling file ~a...~&" file)
+			  (jackc-conditions:syntax-error-condition 2 3)
+			  )
+		 (error (err)
+		   (setf condition-raised t)
+		   (format t *error-format* file err)))
+	    (close current-stream))
+       when condition-raised do (return nil)
+       finally (return t))))

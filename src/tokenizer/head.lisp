@@ -5,6 +5,7 @@
 
 (in-package #:jackc-tokenizer)
 
+;; TODO: Check for unexpected eof
 (defclass tokenizer-head ()
   ((%stream :initarg  :file-stream
 	    :initform nil
@@ -101,28 +102,30 @@
 	     (parse-integer (coerce (reverse int-list) 'string))))
 	(if (<= integer-value 32767)
 	    integer-value
-	    (error "Integer bigger than expected")))))) ; placeholder
+	    (integer-overflow-condition (line-number head)
+					(column-number head)
+					integer-value))))))
 
 (defvar *string-constant-white-chars* '(#\Newline #\Linefeed #\Return))
 
 (defmethod head-match ((head tokenizer-head) (target (eql :string-constant)))
   (head-ff-nonseparator head)
   (let ((str-list nil)
-	(syntax-error nil))
+	(has-syntax-error nil))
     (head-checkpoint (head)
       (let ((buffer (head-next-char head)))
 	(if (not (char= buffer #\"))
-	    (setf syntax-error t)
+	    (setf has-syntax-error t)
 	    (loop while t
 	       do (setf buffer (head-next-char head))
 	       if (member buffer *string-constant-white-chars*)
-	       do (progn (setf syntax-error t)
+	       do (progn (setf has-syntax-error t)
 			 (return))
 	       else if (char= buffer #\")
 	       do (return)
 	       else do (push buffer str-list))))
-      (not syntax-error))
-    (unless syntax-error
+      (not has-syntax-error))
+    (unless has-syntax-error
       (coerce (cons #\" (reverse (cons #\" str-list)))
 	      'string))))
 
@@ -135,11 +138,11 @@
 (defmethod head-match ((head tokenizer-head) (target (eql :identifier)))
   (head-ff-nonseparator head)
   (let ((ident-list nil)
-	(syntax-error nil))
+	(has-syntax-error nil))
     (head-checkpoint (head)
       (let ((buffer (head-next-char head)))
 	(if (numeric-char-p buffer)
-	    (setf syntax-error t)
+	    (setf has-syntax-error t)
 	    (progn (setf ident-list (append ident-list
 					    (list buffer)))
 		   (loop while t
@@ -150,8 +153,8 @@
 				(return))
 		      else do (setf ident-list (append ident-list
 						       (list buffer)))))))
-      (not syntax-error))
-    (unless syntax-error
+      (not has-syntax-error))
+    (unless has-syntax-error
       (coerce ident-list 'string))))
 		 
 

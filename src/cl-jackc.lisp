@@ -12,11 +12,12 @@ Use ANALYZE to specify if the output file is supposed to be just an
 XML file for inspection."
   (handler-case
       (if-let ((file-list (jackc-reader:find-files file-or-dir)))
-	(progn (format t "~a: ~a~&"
-		       (if analyze "Analyzing" "Compiling")
-		       file-list)
-	       (jackc-reader:read-files file-list))
-	(format t "Could not find any Jack files. Compilation aborted.~&"))
-    (error (err) ; TODO: improve error handling with custom errors
+	(progn
+	  ;; (format t "~a: ~a~&"
+	  ;; 	  (if analyze "Analyzing" "Compiling")
+	  ;; 	  file-list)
+		   (jackc-reader:read-files file-list))
+	(file-not-found-condition file-or-dir))
+    (error (err)
       (format t "~a~&" err)
       (format t "Error compiling project. Bailing out."))))

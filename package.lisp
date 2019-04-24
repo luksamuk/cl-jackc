@@ -25,14 +25,18 @@ usually related to language extension."))
    "Definitions for compiler-related conditions."))
 
 (defpackage #:cl-jackc
-  (:use #:cl #:jackc-utils)
+  (:use #:cl
+	#:jackc-utils
+	#:jackc-conditions)
   (:export #:compile-exec)
   (:documentation
    "Default interface for compiler. Exports procedures so the user can
 interact with the compiler."))
 
 (defpackage #:jackc-reader
-  (:use #:cl #:jackc-utils)
+  (:use #:cl
+	#:jackc-utils
+	#:jackc-conditions)
   (:export #:find-files
 	   #:read-files)
   (:documentation
@@ -47,7 +51,10 @@ the analyzer."))
 it. Redirects the tokenizer's output to the parser."))
 
 (defpackage #:jackc-tokenizer
-  (:use #:cl #:jackc-utils #:split-sequence)
+  (:use #:cl
+	#:jackc-utils
+	#:split-sequence
+	#:jackc-conditions)
   (:export #:*the-head*
 	   #:with-new-head
 	   #:head-match
