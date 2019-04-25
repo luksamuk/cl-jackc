@@ -12,11 +12,14 @@
 	    :reader   fstream)
    (%colnum :initform 0
 	    :accessor column-number)
+   (%oldcol :initform nil
+	    :accessor old-columns)
    (%linum  :initform 0
 	    :accessor line-number)))
 
 (defgeneric head-match (head target))
 (defgeneric head-next-char (head))
+(defgeneric head-push-char (head char))
 (defgeneric head-next-nonseparator (head))
 (defgeneric head-position (head))
 (defgeneric (setf head-position) (pos head))
@@ -27,8 +30,17 @@
     (incf (column-number head))
     (when (char= charact #\Newline)
       (incf (line-number head))
+      (push (column-number head) (old-columns head))
       (setf (column-number head) 0))
     charact))
+
+(defmethod head-push-char ((head tokenizer-head) char)
+  (if (char= char #\Newline)
+      (progn
+	(decf (line-number head))
+	(setf (column-number head) (pop (old-columns head))))
+      (decf (column-number head)))
+  (unread-char char (fstream head)))
 
 (defun whitespace-p (character)
   (not (null
@@ -48,8 +60,7 @@
   (file-position (fstream head) pos))
 
 (defmethod head-ff-nonseparator ((head tokenizer-head))
-  (head-next-nonseparator head)
-  (setf (head-position head) (1- (head-position head))))
+  (head-push-char head (head-next-nonseparator head)))
 
 (defmacro head-checkpoint ((head) &body body)
   (let ((init-position (gensym))
@@ -81,18 +92,21 @@
 
 ;; Match for numeric constant
 
-(defvar *integer-constant-symbols* (cdar (grammar-lookup :symbol)))
+(defvar *integer-constant-symbols*
+  (mapcar (lambda (x)
+	    (car (coerce x 'list)))
+	  (cdar (grammar-lookup :symbol))))
 
 (defmethod head-match ((head tokenizer-head) (target (eql :integer-constant)))
   (head-ff-nonseparator head)
-  (let ((int-list nil))
+  (let ((int-list nil)
+	(buffer nil))
     (head-checkpoint (head)
       (loop while t
-	 for buffer = (head-next-char head)
+	 do (setf buffer (head-next-char head))
 	 if (or (whitespace-p buffer)
 		(member buffer *integer-constant-symbols*))
-	 do (progn (setf (head-position head)
-			 (- (head-position head) 2))
+	 do (progn (head-push-char head buffer)
 		   (return))
 	 else if (numeric-char-p buffer)
 	 do (push buffer int-list))
@@ -131,9 +145,7 @@
 
 (defvar *identifier-match-end-chars*
   (append '(#\Space #\Newline #\Tab #\Linefeed #\Return)
-	  (mapcar (lambda (x)
-		    (car (coerce x 'list)))
-		  *integer-constant-symbols*)))
+	  *integer-constant-symbols*))
 
 (defmethod head-match ((head tokenizer-head) (target (eql :identifier)))
   (head-ff-nonseparator head)
@@ -148,8 +160,7 @@
 		   (loop while t
 		      do (setf buffer (head-next-char head))
 		      if (member buffer *identifier-match-end-chars*)
-		      do (progn (setf (head-position head)
-				      (1- (head-position head)))
+		      do (progn (head-push-char head buffer)
 				(return))
 		      else do (setf ident-list (append ident-list
 						       (list buffer)))))))
