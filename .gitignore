@@ -2,6 +2,7 @@
 #*#*
 *.asm
 *.hack
+*.fasl
 system-index.txt
 quicklisp/
 qlfile.lock
