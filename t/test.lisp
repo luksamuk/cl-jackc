@@ -26,6 +26,9 @@
 (defun match-token (string)
   (head-match *the-head* string))
 
+(defparameter *long-text-eof*
+  (format nil "32768~%some text longer than a number"))
+  
 (deftest tokenizer-head-test
   (testing "tokens"
     (with-new-head ((open (script-file "tokens")))
@@ -82,5 +85,8 @@
 	((match-token :identifier)   "Bar")
 	((match-token :identifier)   "new")
 	((match-token "(")           "("))))
+  (testing "unexpected eof"
+    (with-new-head ((open (script-file "intoverflow")))
+      (ok (signals (match-token *long-text-eof*) 'unexpected-eof))))
   (testing "comments"
     (skip "Comment support not implemented yet.")))

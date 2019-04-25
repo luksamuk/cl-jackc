@@ -26,7 +26,9 @@
 (defgeneric head-ff-nonseparator (head))
 
 (defmethod head-next-char ((head tokenizer-head))
-  (let ((charact (read-char (fstream head))))
+  (let ((charact (read-char (fstream head) nil :eof)))
+    (when (eq charact :eof)
+      (unexpected-eof-condition))
     (incf (column-number head))
     (when (char= charact #\Newline)
       (incf (line-number head))
