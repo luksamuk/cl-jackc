@@ -1,0 +1,12 @@
+class /* This is a comment! */ Bar {
+    // This is a line comment.
+    static int something;
+
+    // This is a constructor for the class.
+    constructor Bar new() {
+        /* This is a multiline comment!
+           Its length shouldn't matter. */
+        return this; // Return reference to this class
+    }
+}
+

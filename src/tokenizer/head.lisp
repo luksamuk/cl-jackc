@@ -5,7 +5,6 @@
 
 (in-package #:jackc-tokenizer)
 
-;; TODO: Check for unexpected eof
 (defclass tokenizer-head ()
   ((%stream :initarg  :file-stream
 	    :initform nil
@@ -50,10 +49,24 @@
 		'(#\Space #\Newline #\Tab #\Linefeed #\Return)))))
 
 (defmethod head-next-nonseparator ((head tokenizer-head))
-  (let ((current (head-next-char head)))
-    (loop while (whitespace-p current)
-       do (setf current (head-next-char head)))
-    current))
+  (labels ((check-comment-token (comment-token)
+	     (head-checkpoint (head)
+	       (loop for token-char across comment-token
+		  for current = (head-next-char head)
+		  always (char= token-char current))))
+	   (skip-comments ()
+	     (loop for comment-pair in *comment-tokens*
+		for comment-end = (or (cdr comment-pair) (format nil "~%"))
+		if (check-comment-token (car comment-pair))
+		do (loop until (check-comment-token comment-end)
+		      do (head-next-char head)))))
+    (let ((current nil))
+      (loop while (whitespace-p
+		   (progn (skip-comments)
+			  (setf current (head-next-char head))
+			  current)))
+      current)))
+
 
 (defmethod head-position ((head tokenizer-head))
   (file-position (fstream head)))
@@ -90,15 +103,14 @@
 
 (defun numeric-char-p (char)
   (and (>= (char-code char) (char-code #\0))
-       (<= (char-code char) (char-code #\9))))
-
-;; Match for numeric constant
+       (<= (char-code char) (char-code #\9))))t
 
 (defvar *integer-constant-symbols*
   (mapcar (lambda (x)
 	    (car (coerce x 'list)))
 	  (cdar (grammar-lookup :symbol))))
 
+;; Match for numeric constan
 (defmethod head-match ((head tokenizer-head) (target (eql :integer-constant)))
   (head-ff-nonseparator head)
   (let ((int-list nil)
@@ -124,6 +136,7 @@
 
 (defvar *string-constant-white-chars* '(#\Newline #\Linefeed #\Return))
 
+;; Match for string constant
 (defmethod head-match ((head tokenizer-head) (target (eql :string-constant)))
   (head-ff-nonseparator head)
   (let ((str-list nil)
@@ -149,6 +162,7 @@
   (append '(#\Space #\Newline #\Tab #\Linefeed #\Return)
 	  *integer-constant-symbols*))
 
+;; Match for identifier
 (defmethod head-match ((head tokenizer-head) (target (eql :identifier)))
   (head-ff-nonseparator head)
   (let ((ident-list nil)

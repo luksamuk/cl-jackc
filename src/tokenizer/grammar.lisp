@@ -5,7 +5,7 @@
 
 (in-package #:jackc-tokenizer)
 
-(defvar *grammar-rules*
+(defparameter *grammar-rules*
   ;;;  Lexical elements
   '((:keyword          ((:or "class" "constructor" "function"
 			     "method" "field" "static" "var"
@@ -119,7 +119,7 @@
 ;;; Comment tokens
 ;; Each token has a beginning token, and an end token. Comment tokens with NIL
 ;; as end token expect #\Newline at end.
-(defvar *comment-tokens* '(("//") ("/*" "*/")))
+(defparameter *comment-tokens* '(("//") ("/*" . "*/")))
 
 (defvar *quantifiers*   '(:or :many :maybe))
 (defvar *builtin-rules* '(:integer-constant :string-constant :identifier))
