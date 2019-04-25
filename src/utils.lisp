@@ -14,3 +14,13 @@ CONSEQUENT; otherwise, executes ALTERNATIVE."
 	   ,consequent
 	   ,alternative))))
 
+(defun whitespace-p (character)
+  "Checks whether CHARACTER is a whitespace character."
+  (not (null
+	(member character
+		'(#\Space #\Newline #\Tab #\Linefeed #\Return)))))
+
+(defun numeric-char-p (char)
+  "Checks whether CHAR is a numeric (0~9) character."
+  (and (>= (char-code char) (char-code #\0))
+       (<= (char-code char) (char-code #\9))))

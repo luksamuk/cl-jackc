@@ -5,7 +5,9 @@
 
 (defpackage #:jackc-utils
   (:use #:cl)
-  (:export #:if-let)
+  (:export #:if-let
+	   #:whitespace-p
+	   #:numeric-char-p)
   (:documentation
    "Utilities and miscellaneous structures for all other compiler modules,
 usually related to language extension."))
@@ -55,12 +57,14 @@ it. Redirects the tokenizer's output to the parser."))
 	#:jackc-utils
 	#:split-sequence
 	#:jackc-conditions)
-  (:export #:*the-head*
-	   #:with-new-head
-	   #:head-match
-	   #:tokenizer-head
+  (:export #:tokenizer-head
 	   #:column-number
-	   #:line-number)
+	   #:line-number
+	   #:head-match
+	   #:head-position
+	   #:head-checkpoint
+	   #:*the-head*
+	   #:with-new-head)
   (:documentation
    "Takes a file stream, produces an alist for it. The alist output
 resembles the expected XML after a single analysis step."))
