@@ -5,9 +5,11 @@
 
 (in-package #:jackc-tokenizer)
 
+
+
 (defparameter *grammar-rules*
-  ;;;  Lexical elements
-  '((:keyword          ((:or "class" "constructor" "function"
+  '(;;;  Lexical elements
+    (:keyword          ((:or "class" "constructor" "function"
 			     "method" "field" "static" "var"
 			     "int" "char" "boolean" "void"
 			     "true" "false" "null" "this" "let"
@@ -15,14 +17,6 @@
     (:symbol           ((:or "{" "}" "(" ")" "[" "]" "." ","
 			     ";" "+" "-" "*" "/" "&" "|" "<"
 			     ">" "=" "~")))
-    
-    ;;; Builtin lexical elements
-    ;; :integer-constant
-    ;;   (all-numeric, no whitespace inbetween, ends at whitespace or symbol)
-    ;; :string-constant
-    ;;   (starts and begins with #\", non-space whitespace inbetween)
-    ;; :identifier
-    ;;   (does not start with number, reads until whitespace or symbol)
     
     ;;; Program structure
     (:class             ((:keyword "class")
@@ -114,26 +108,39 @@
 			      (:symbol "<") (:symbol ">") (:symbol "="))))
     (:unary-op          ((:or (:symbol "-") (:symbol "~"))))
     (:keyword-constant  ((:or (:keyword "true") (:keyword "false")
-			      (:keyword "null") (:keyword "this"))))))
+			      (:keyword "null") (:keyword "this"))))
+    )
+  "Enumerates the grammar rules of the Jack language.")
 
-;;; Comment tokens
-;; Each token has a beginning token, and an end token. Comment tokens with NIL
-;; as end token expect #\Newline at end.
-(defparameter *comment-tokens* '(("//") ("/*" . "*/")))
 
-(defvar *quantifiers*   '(:or :many :maybe))
-(defvar *builtin-rules* '(:integer-constant :string-constant :identifier))
+(defparameter *comment-tokens* '(("//") ("/*" . "*/"))
+  "Enumerates a list of comment token pairs, where the first is the opening token,
+and the second is the closing token. If no closing token has been specified, then
+it is assumed to be the newline character.")
+
+(defvar *quantifiers*   '(:or :many :maybe)
+  "Enumerates quantifiers for each rule.")
+
+(defvar *builtin-rules* '(:integer-constant :string-constant :identifier)
+  "Enumerates builtin lexical elements which are implemented on the matching
+engine.")
 
 
 (defparameter *grammar*
   (loop with hashtable = (make-hash-table)
      for rule in *grammar-rules*
      do (setf (gethash (car rule) hashtable) (cadr rule))
-     finally (return hashtable)))
+     finally (return hashtable))
+  "Holds the de-facto grammar used for lookup. Each grammar rule is the key to an
+element on a hash table, and matches exactly one rule list, which may also reference
+other grammar rules.")
 
-(defparameter *initial-var* :class)
+(defparameter *initial-var* :class
+  "Determines the initial rule which the matcher should lookup at the beginning of
+every file.")
 
 (defun camelcase-keyword (keyword)
+  "Takes a KEYWORD and rewrites it in camel case style."
   (coerce (loop with should-upcase = nil
 	     for char across (string-downcase (format nil "~a" keyword))
 	     if (char= char #\-)
@@ -145,6 +152,7 @@
 	  'string))
 
 (defun grammar-lookup (keyword)
+  "Looks up KEYWORD in the grammar and returns the rule list associated with it."
   (multiple-value-bind (value unused)
       (gethash keyword *grammar*)
     (declare (ignore unused))
