@@ -153,7 +153,8 @@ every file.")
 
 (defun grammar-lookup (keyword)
   "Looks up KEYWORD in the grammar and returns the rule list associated with it."
-  (multiple-value-bind (value unused)
-      (gethash keyword *grammar*)
-    (declare (ignore unused))
-    value))
+  (unless (null keyword)
+    (multiple-value-bind (value unused)
+	(gethash keyword *grammar*)
+      (declare (ignore unused))
+      value)))

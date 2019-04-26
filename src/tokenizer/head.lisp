@@ -23,6 +23,11 @@ constant.")
 	  *integer-constant-symbols*)
   "Enumerates all characters which may end an arbitrary identifier.")
 
+(defvar *identifier-forbidden-matches*
+  (append (cdar (grammar-lookup :symbol))
+	  (cdar (grammar-lookup :keyword)))
+  "Enumerates all tokens which cannot be an identifier")
+
 (defvar *the-head* nil
   "Names a global TOKENIZER-HEAD which may be accessible externally. However,
 this variable should not be manipulated directly; instead, one should use the
@@ -235,7 +240,12 @@ identifier, and returns the matched identifier. If not, returns NIL."
 						       (list buffer)))))))
       (not has-syntax-error))
     (unless has-syntax-error
-      (coerce ident-list 'string))))
+      (let ((the-identifier (coerce ident-list 'string)))
+	(if (member the-identifier
+		    *identifier-forbidden-matches*
+		    :test #'string=)
+	    nil
+	    the-identifier)))))
 
 
 ;;; External head-related utilities
