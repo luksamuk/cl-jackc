@@ -66,6 +66,14 @@ the HEAD to the next character to be fetched."))
   (:documentation "Pushes a previously fetched CHARACTER to the file stream, prior
 to where the HEAD points to, and also rewinds the HEAD to such location."))
 
+(defgeneric head-in-token-p (head token)
+  (:documentation "Tests whether the HEAD is currently in the beginning of a
+TOKEN."))
+
+(defgeneric head-skip-to-end-of-comment (head)
+  (:documentation "Fast-forwards the HEAD to the end of a comment, if the HEAD
+currently points to the beginning of a comment string."))
+
 (defgeneric head-next-nonseparator (head)
   (:documentation "Returns the next valid character on the file stream held by the
 HEAD. The character is guaranteed to be non-whitespace, and to be outside any
@@ -82,6 +90,28 @@ number currently held by the HEAD."))
 
 (defgeneric head-ff-nonseparator (head)
   (:documentation "Fast-forwards the HEAD to a non-whitespace character."))
+
+
+;;; Macros
+
+(defmacro head-checkpoint ((head) &body body)
+  "Saves the current position, line and column numbers of HEAD, then evaluates
+the BODY. If the BODY returns NIL, the position, line and column numbers of
+HEAD are restored."
+  (let ((init-position (gensym))
+	(line-and-col (gensym))
+	(result (gensym)))
+    `(let ((,init-position (head-position ,head))
+	   (,line-and-col (cons (line-number ,head)
+				(column-number ,head)))
+	   (,result (progn ,@body)))
+       (if (not ,result)
+	   (progn
+	     (setf (head-position ,head) ,init-position
+		   (line-number ,head)   (car ,line-and-col)
+		   (column-number ,head) (cdr ,line-and-col))
+	     nil)
+	   ,result))))
 
 
 ;;; Method implementations
@@ -105,24 +135,26 @@ number currently held by the HEAD."))
       (decf (column-number head)))
   (unread-char char (fstream head)))
 
+(defmethod head-in-token-p ((head tokenizer-head) token)
+  (head-checkpoint (head)
+    (loop for token-char across token
+       for current = (head-next-char head)
+       always (char= token-char current))))
+
+(defmethod head-skip-to-end-of-comment ((head tokenizer-head))
+  (loop for comment-pair in *comment-tokens*
+     for comment-end = (or (cdr comment-pair) (format nil "~%"))
+     if (head-in-token-p head (car comment-pair))
+     do (loop until (head-in-token-p head comment-end)
+	   do (head-next-char head))))
+
 (defmethod head-next-nonseparator ((head tokenizer-head))
-  (labels ((comment-token-p (head comment-token)
-	     (head-checkpoint (head)
-	       (loop for token-char across comment-token
-		  for current = (head-next-char head)
-		  always (char= token-char current))))
-	   (skip-comments (head)
-	     (loop for comment-pair in *comment-tokens*
-		for comment-end = (or (cdr comment-pair) (format nil "~%"))
-		if (comment-token-p head (car comment-pair))
-		do (loop until (comment-token-p head comment-end)
-		      do (head-next-char head)))))
-    (let ((current nil))
-      (loop while (whitespace-p
-		   (progn (skip-comments head)
-			  (setf current (head-next-char head))
-			  current)))
-      current)))
+  (let ((current nil))
+    (loop while (whitespace-p
+		 (progn (head-skip-to-end-of-comment head)
+			(setf current (head-next-char head))
+			current)))
+    current))
 
 
 (defmethod head-position ((head tokenizer-head))
@@ -133,25 +165,6 @@ number currently held by the HEAD."))
 
 (defmethod head-ff-nonseparator ((head tokenizer-head))
   (head-push-char head (head-next-nonseparator head)))
-
-(defmacro head-checkpoint ((head) &body body)
-  "Saves the current position, line and column numbers of HEAD, then evaluates
-the BODY. If the BODY returns NIL, the position, line and column numbers of
-HEAD are restored."
-  (let ((init-position (gensym))
-	(line-and-col (gensym))
-	(result (gensym)))
-    `(let ((,init-position (head-position ,head))
-	   (,line-and-col (cons (line-number ,head)
-				(column-number ,head)))
-	   (,result (progn ,@body)))
-       (if (not ,result)
-	   (progn
-	     (setf (head-position ,head) ,init-position
-		   (line-number ,head)   (car ,line-and-col)
-		   (column-number ,head) (cdr ,line-and-col))
-	     nil)
-	   ,result))))
 
 
 (defmethod head-match ((head tokenizer-head) (string string))
