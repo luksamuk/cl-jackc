@@ -1,4 +1,4 @@
 #!/bin/bash
 
-qlot exec ros run -s cl-jackc/test -e "(rove:run :cl-jackc/test)" --quit
+qlot exec ros run -s cl-jackc/test -e "(load \"t/run-tests.lisp\")" --quit
 

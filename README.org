@@ -2,6 +2,8 @@
 #+AUTHOR: Lucas Vieira
 #+EMAIL: lucasvieira@protonmail.com
 
+[[https://travis-ci.org/luksamuk/cl-jackc.svg?branch=master]]
+
 * Introduction
 This is a compiler for the Jack language, the high-level language of
 the Hack platform, an exercise of the book The Elements of Computing
