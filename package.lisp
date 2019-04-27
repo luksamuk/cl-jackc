@@ -63,7 +63,9 @@ it. Redirects the tokenizer's output to the parser."))
 	   #:head-match
 	   #:head-position
 	   #:head-checkpoint
+	   #:head-next-nonseparator
 	   #:*the-head*
+	   #:match-compare
 	   #:with-new-head)
   (:documentation
    "Takes a file stream, produces an alist for it. The alist output

@@ -23,8 +23,8 @@
      ,@(loop for case in body
 	  collect `(ok (equal ,(car case) ,(cadr case))))))
 
-(defun match-token (string)
-  (head-match *the-head* string))
+(defmacro match-token (test)
+  `(head-match *the-head* ,test))
 
 (defparameter *long-text-eof*
   (format nil "32768~%some text longer than a number"))
