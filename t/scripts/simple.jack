@@ -1,0 +1,21 @@
+class Foo {
+    static int a;
+    field String name;
+
+    constructor Foo new() {
+        let a = a + 1;
+        let name = "Hello!";
+	return this;
+    }
+
+    method void dispose() {
+	return;
+    }
+
+    method void showName() {
+        do printString("Hello, my name is ");
+        do printString(name);
+        do println();
+        return;
+    }
+}

@@ -29,7 +29,7 @@
 (defparameter *long-text-eof*
   (format nil "32768~%some text longer than a number"))
   
-(deftest tokenizer-head-test
+(deftest tokenizer-head
   (testing "tokens"
     (with-new-head ((open (script-file "tokens")))
       (expected-results
@@ -109,3 +109,7 @@
 	((match-token ";")            ";")
 	((match-token "}")            "}")
 	((match-token "}")            "}")))))
+
+(deftest grammar-matcher-endurance
+  (ok (match-grammar-rules (open (script-file "simple.jack"))))
+  (ok (match-grammar-rules (open (script-file "valid.jack")))))

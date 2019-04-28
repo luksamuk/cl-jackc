@@ -64,8 +64,8 @@ it. Redirects the tokenizer's output to the parser."))
 	   #:head-position
 	   #:head-checkpoint
 	   #:*the-head*
-	   #:match-compare
-	   #:with-new-head)
+	   #:with-new-head
+	   #:match-grammar-rules)
   (:documentation
    "Takes a file stream, produces an alist for it. The alist output
 resembles the expected XML after a single analysis step."))

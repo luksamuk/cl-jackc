@@ -68,7 +68,7 @@ to where the HEAD points to, and also rewinds the HEAD to such location."))
 
 (defgeneric head-in-token-p (head token)
   (:documentation "Tests whether the HEAD is currently in the beginning of a
-TOKEN."))
+TOKEN. If so, places the HEAD directly after said TOKEN on the stream."))
 
 (defgeneric head-skip-to-end-of-comment (head)
   (:documentation "Fast-forwards the HEAD to the end of a comment, if the HEAD

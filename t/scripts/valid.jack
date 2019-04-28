@@ -1,0 +1,22 @@
+class Foo {
+    static int a;
+    field String name;
+
+    constructor Foo new() {
+        let a = a + 1;
+        let name = "Hello!";
+	return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+	return;
+    }
+
+    method void showName() {
+        do Output.printString("Hello, my name is ");
+        do Output.printString(name);
+        do Output.println();
+        return;
+    }
+}

@@ -45,9 +45,9 @@
 			 :parameter-list
 			 (:symbol ")")
 			 :subroutine-body))
-    (:parameter-list    ((:maybe (:type :var-name)
+    (:parameter-list    (:maybe (:type :var-name)
 				 (:many ((:symbol ",")
-					 :type :var-name)))))
+					 :type :var-name))))
     (:subroutine-body   ((:symbol "{")
 			 (:many :var-dec)
 			 :statements
@@ -60,7 +60,7 @@
     (:var-name          (:identifier))
     
     ;;; Statements
-    (:statements        ((:many :statement)))
+    (:statements        (:many :statement))
     (:statement         ((:or :let-statement :if-statement :while-statement
 			      :do-statement :return-statement)))
     (:let-statement     ((:keyword "let") :var-name
@@ -102,7 +102,7 @@
 			      ((:or :class-name :var-name)
 			       (:symbol ".") :subroutine-name
 			       (:symbol "(") :expression-list (:symbol ")")))))
-    (:expression-list   ((:maybe :expression (:many (:symbol ",") :expression))))
+    (:expression-list   (:maybe :expression (:many (:symbol ",") :expression)))
     (:op                ((:or (:symbol "+") (:symbol "-") (:symbol "*")
 			      (:symbol "/") (:symbol "&") (:symbol "|")
 			      (:symbol "<") (:symbol ">") (:symbol "="))))
@@ -158,3 +158,17 @@ every file.")
 	(gethash keyword *grammar*)
       (declare (ignore unused))
       value)))
+
+(defun builtin-rule-p (rule)
+  "Checks if a certain grammar RULE is a built-in rule."
+  (when (member rule *builtin-rules*) t))
+
+(defun quantified-rule-p (rule-list)
+  "Checks if a certain RULE-LIST is a quantified list of rules."
+  (when (member (car rule-list) *quantifiers*) t))
+
+(defun exact-match-rule-p (rule-list)
+  "Checks if a certain RULE-LIST is an exact-match rule (a token-only rule followed
+by the expected token)."
+  (and (= (list-length rule-list) 2)
+       (stringp (cadr rule-list))))
