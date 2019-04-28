@@ -54,23 +54,24 @@ package, which depends on the other modules, and works as a frontend.
   user. For each given file, generates a file stream and passes it to
   the analyzer.
 
-- ~jackc-analyzer~
-
-  Takes a single file stream, and invokes the tokenizer for
-  it. Redirects the tokenizer's output to the parser.
-  
-  Relates to the /JackAnalyzer/ module, proposed in the book.
-
 - ~jackc-tokenizer~
 
-  Takes a file stream, produces an alist for it. The alist output
-  resembles the expected XML after a single analysis step.
+  Capable of reading specific tokens and handling a file stream, while
+  also holding the language grammar specification.
   
-  Relates to the /JackTokenizer/ module, proposed in the book.
+  Relates to the /JackTokenizer/ module, proposed in the book, except
+  that the generation of the parsing tree was passed to the analyzer.
+
+- ~jackc-analyzer~
+
+  Takes a single file stream, and matches it with the language
+  grammar, generating a syntax tree. Redirects the output to the parser.
+  
+  Relates mostly to the /JackAnalyzer/ module, proposed in the book.
 
 - ~jackc-parser~
 
-  Takes the output of a file tokenization, and effectively compiles it
+  Takes the output of a file analysis, and effectively compiles it
   to one of the desired outputs (XML or VM), outputting it to console.
   
   Relates to the /CompilationEngine/ module, proposed in the book.

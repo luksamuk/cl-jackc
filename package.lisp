@@ -66,8 +66,8 @@ the analyzer."))
 	   #:quantified-rule-p
 	   #:exact-match-rule-p)
   (:documentation
-   "Takes a file stream, produces an alist for it. The alist output
-resembles the expected XML after a single analysis step."))
+   "Capable of reading specific tokens and handling a file stream, while
+also holding the language grammar specification."))
 
 (defpackage #:jackc-analyzer
   (:use #:cl
@@ -75,8 +75,8 @@ resembles the expected XML after a single analysis step."))
 	#:jackc-tokenizer)
   (:export #:analyze)
   (:documentation
-   "Takes a single file stream, and invokes the tokenizer for
-it. Redirects the tokenizer's output to the parser."))
+   "Takes a single file stream, and matches it with the language
+grammar, generating a syntax tree. Redirects the output to the parser."))
 
 (defpackage #:jackc-parser
   (:use #:cl)
