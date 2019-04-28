@@ -5,8 +5,9 @@
 
 (defpackage #:cl-jackc/test
   (:use #:cl
-	#:jackc-tokenizer
 	#:jackc-conditions
+	#:jackc-tokenizer
+	#:jackc-analyzer
 	#:rove))
 
 (in-package #:cl-jackc/test)
@@ -29,7 +30,7 @@
 (defparameter *long-text-eof*
   (format nil "32768~%some text longer than a number"))
   
-(deftest tokenizer-head
+(deftest tokenizer-test
   (testing "tokens"
     (with-new-head ((open (script-file "tokens")))
       (expected-results
@@ -110,6 +111,6 @@
 	((match-token "}")            "}")
 	((match-token "}")            "}")))))
 
-(deftest grammar-matcher-endurance
-  (ok (match-grammar-rules (open (script-file "simple.jack"))))
-  (ok (match-grammar-rules (open (script-file "valid.jack")))))
+(deftest analyzer-endurance-test
+  (ok (analyze (open (script-file "simple.jack"))))
+  (ok (analyze (open (script-file "valid.jack")))))

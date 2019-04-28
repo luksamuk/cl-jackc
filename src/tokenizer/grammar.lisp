@@ -163,9 +163,13 @@ every file.")
   "Checks if a certain grammar RULE is a built-in rule."
   (when (member rule *builtin-rules*) t))
 
+(defun quantifier-p (symbol)
+  "Checks if a certain SYMBOL is a grammar quantifier."
+  (when (member symbol *quantifiers*) t))
+
 (defun quantified-rule-p (rule-list)
   "Checks if a certain RULE-LIST is a quantified list of rules."
-  (when (member (car rule-list) *quantifiers*) t))
+  (quantifier-p (car rule-list)))
 
 (defun exact-match-rule-p (rule-list)
   "Checks if a certain RULE-LIST is an exact-match rule (a token-only rule followed

@@ -16,11 +16,10 @@
 				     (:file "conditions")
 				     (:file "cl-jackc")
 				     (:file "reader")
-				     (:file "analyzer")
 				     (:module "tokenizer"
 					      :components ((:file "grammar")
-							   (:file "head")
-							   (:file "matcher")))
+							   (:file "head")))
+				     (:file "analyzer")
 				     (:file "parser")
 				     (:file "writer")))))
 

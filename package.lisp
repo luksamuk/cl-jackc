@@ -46,12 +46,6 @@ interact with the compiler."))
 user. For each given file, generates a file stream and passes it to
 the analyzer."))
 
-(defpackage #:jackc-analyzer
-  (:use #:cl)
-  (:documentation
-   "Takes a single file stream, and invokes the tokenizer for
-it. Redirects the tokenizer's output to the parser."))
-
 (defpackage #:jackc-tokenizer
   (:use #:cl
 	#:jackc-utils
@@ -65,10 +59,24 @@ it. Redirects the tokenizer's output to the parser."))
 	   #:head-checkpoint
 	   #:*the-head*
 	   #:with-new-head
-	   #:match-grammar-rules)
+	   #:camelcase-keyword
+	   #:grammar-lookup
+	   #:*initial-var*
+	   #:builtin-rule-p
+	   #:quantified-rule-p
+	   #:exact-match-rule-p)
   (:documentation
    "Takes a file stream, produces an alist for it. The alist output
 resembles the expected XML after a single analysis step."))
+
+(defpackage #:jackc-analyzer
+  (:use #:cl
+	#:jackc-conditions
+	#:jackc-tokenizer)
+  (:export #:analyze)
+  (:documentation
+   "Takes a single file stream, and invokes the tokenizer for
+it. Redirects the tokenizer's output to the parser."))
 
 (defpackage #:jackc-parser
   (:use #:cl)
