@@ -86,6 +86,12 @@
 	((match-token :identifier)   "Bar")
 	((match-token :identifier)   "new")
 	((match-token "(")           "("))))
+  (testing "separated-identifier"
+    (with-new-head ((open (script-file "identifier")))
+      (expected-results
+	((match-token :identifier)   "Class")
+	((match-token ".")           ".")
+	((match-token :identifier)   "thing"))))
   (testing "unexpected eof"
     (with-new-head ((open (script-file "intoverflow")))
       (ok (signals (match-token *long-text-eof*) 'unexpected-eof))))
@@ -113,4 +119,5 @@
 
 (deftest analyzer-endurance-test
   (ok (analyze (open (script-file "simple.jack"))))
-  (ok (analyze (open (script-file "valid.jack")))))
+  (ok (analyze (open (script-file "valid.jack"))))
+  (ok (analyze (open (script-file "valid2.jack")))))

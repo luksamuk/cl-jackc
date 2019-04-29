@@ -90,18 +90,18 @@
     (:term              ((:or :integer-constant
 			      :string-constant
 			      :keyword-constant
-			      :var-name
 			      (:var-name (:symbol "[")
 					 :expression
 					 (:symbol "]"))
 			      :subroutine-call
+			      :var-name
 			      ((:symbol "(") :expression (:symbol ")"))
 			      (:unary-op :term))))
     (:subroutine-call   ((:or (:subroutine-name
-			       (:symbol "(") :expression-list (:symbol ")"))
-			      ((:or :class-name :var-name)
-			       (:symbol ".") :subroutine-name
-			       (:symbol "(") :expression-list (:symbol ")")))))
+    			       (:symbol "(") :expression-list (:symbol ")"))
+    			      ((:or :class-name :var-name)
+    			       (:symbol ".") :subroutine-name
+    			       (:symbol "(") :expression-list (:symbol ")")))))
     (:expression-list   (:maybe :expression (:many (:symbol ",") :expression)))
     (:op                ((:or (:symbol "+") (:symbol "-") (:symbol "*")
 			      (:symbol "/") (:symbol "&") (:symbol "|")

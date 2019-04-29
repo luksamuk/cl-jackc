@@ -1,0 +1,19 @@
+class Board {
+    field int a;
+    field int b;
+    field Array arr1;
+    field Array arr2;
+
+    constructor Board new() {
+        let arr1 = Array.new();
+        let arr2 = Array.new();
+	return this;
+    }
+
+    method void dispose() {
+        do arr1.dispose();
+        do arr2.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

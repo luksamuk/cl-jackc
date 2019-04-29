@@ -32,12 +32,15 @@
 		       (quantified-rule-p match-result))))
      collect match-result
      else if (null match-result)
-     do (syntax-error-condition (line-number *the-head*)
-				(column-number *the-head*))))
+     do (progn
+	  (debug-log "group-error" (list rule "in" rule-list))
+	  (syntax-error-condition (line-number *the-head*)
+				  (column-number *the-head*)))))
 
 ;; TODO: check if (token-class "token") is
 ;; valid when compiling grammar into hashmap
 (defun match-exact (rule)
+  (debug-log "exact" rule)
   (head-checkpoint (*the-head*)
     (let ((result (match-token (cadr rule))))
       (unless (null result) rule))))
@@ -48,9 +51,10 @@
 ;;; Quantified rules
 
 (defun match-try (rule)
-  (handler-case
-      (match-rec rule)
-    (syntax-error () nil)))
+  (head-checkpoint (*the-head*)
+    (handler-case
+	(match-rec rule)
+      (syntax-error () nil))))
 
 (defgeneric match-quantifier (quantifier rule-list))
 
@@ -77,10 +81,11 @@
     (cons :many result)))
 
 (defun match-quantified (rule)
+  (debug-log "quantified" rule)
   (let ((result (match-quantifier (car rule) (cdr rule))))
     (if (and (eql (car rule) :or)
 	     (null result))
-	(syntax-error-condition (line-number *the-head*)
+        (syntax-error-condition (line-number *the-head*)
 				(column-number *the-head*))
 	result)))
 
