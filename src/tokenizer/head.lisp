@@ -142,12 +142,26 @@ HEAD are restored."
        for current = (head-next-char head)
        always (char= token-char current))))
 
+;; Change this strategy! Does not work with consecutive comments.
 (defmethod head-skip-to-end-of-comment ((head tokenizer-head))
-  (loop for comment-pair in *comment-tokens*
-     for comment-end = (or (cdr comment-pair) (format nil "~%"))
-     if (head-in-token-p head (car comment-pair))
-     do (loop until (head-in-token-p head comment-end)
-	   do (head-next-char head))))
+  (labels ((skip-comment (comment-start comment-end)
+	     (when (head-in-token-p head comment-start)
+	       (loop until (head-in-token-p head comment-end)
+		  do (head-next-char head))))
+	   (head-in-token-noskip-p (head token)
+	     (let ((result nil))
+	       (head-checkpoint (head)
+		 (setf result (head-in-token-p head token))
+		 nil)
+	       result))
+	   (head-in-comment-start-p (head)
+	     (loop for comment-pair in *comment-tokens*
+		thereis (head-in-token-noskip-p head (car comment-pair)))))
+    (loop while (head-in-comment-start-p head)
+       do (loop for comment-pair in *comment-tokens*
+	       do (skip-comment (car comment-pair)
+				(or (cdr comment-pair)
+				    (format nil "~%")))))))
 
 (defmethod head-next-nonseparator ((head tokenizer-head))
   (let ((current nil))
@@ -172,6 +186,7 @@ HEAD are restored."
   "Tests whether the HEAD currently points to the beginning of a specific
 STRING. If so, points the HEAD to the character immediately after the
 matching STRING, and returns the matched STRING. If not, returns NIL."
+  (head-ff-nonseparator head)
   (when (head-checkpoint (head)
 	  (loop for character across string
 	     for stream-char = (head-next-nonseparator head)
