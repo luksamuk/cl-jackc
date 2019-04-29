@@ -1,0 +1,40 @@
+class Random {
+    static int seed;
+    static int modulus;
+    static int multiplier;
+    static int increment;
+
+    function void init() {
+        let seed       = 12347;
+        let modulus    = 32767; // 2^15
+        let multiplier = 16807;
+        let increment  = 5;
+	return;
+    }
+
+    // Linear congruent generator for 16-bit architecture.
+    // Seems to work well.
+    function int rand() {
+        var int pass1;
+	let pass1 = (multiplier * seed) + increment;
+        let seed = Random.remainder(pass1, modulus);
+	return seed;
+    }
+
+    // This is a very inefficient implementation.
+    function int remainder(int dividend, int divisor) {
+	if(dividend < 0) {
+	    let dividend = dividend * -1;
+	}
+	
+	if(divisor < 0) {
+	    let divisor = divisor * -1;
+	}
+
+	while(~(dividend < divisor)) {
+	    let dividend = dividend - divisor;
+	}
+	
+	return dividend;
+    }
+}

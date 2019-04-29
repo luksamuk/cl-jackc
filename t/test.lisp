@@ -120,4 +120,6 @@
 (deftest analyzer-endurance-test
   (ok (analyze (open (script-file "simple.jack"))))
   (ok (analyze (open (script-file "valid.jack"))))
-  (ok (analyze (open (script-file "valid2.jack")))))
+  (ok (analyze (open (script-file "valid2.jack"))))
+  (ok (analyze (open (script-file "Board.jack"))))
+  (ok (analyze (open (script-file "Random.jack")))))

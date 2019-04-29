@@ -1,0 +1,233 @@
+class Board {
+      field int   width;
+      field int   height;
+      field int   size;
+      field Array content;
+      field Array visibility;
+
+      constructor Board new() {
+          let width  = 9;
+          let height = 9;
+	  let size   = (width * height);
+          let content = Array.new(width * height);
+	  let visibility = Array.new(width * height);
+	  do fill_board();
+          return this;
+      }
+
+      method void fill_board() {
+          var int i;
+	  var int chosen;
+	  var int aux;
+	  
+	  // Zerofill board contents
+	  let i = 0;
+          while(~(i = size)) {
+	      let content[i] = 0;
+	      let visibility[i] = 0;
+	      let i = i + 1;
+	  }
+
+	  // Put about 10 bombs on board
+	  let i = 0;
+	  let aux = 0;
+	  while(~(i = 10)) {
+	      // Keep distributing bombs until the current place is
+	      // valid. This ensures 1/8 of the board filled with bombs
+              while(aux = 0) {
+	          let chosen = Random.remainder(Random.rand(), size - 1);
+		  if(~(content[chosen] = 9)) {
+		      let content[chosen] = 9;
+		      let aux = 1;
+		  }
+	      }
+              let aux = 0;
+	      let i = i + 1;
+	  }
+
+	  // Occupy rest of board with numbers
+	  let i = 0;
+	  while(~(i = width)) {
+	      let chosen = 0;
+	      while(~(chosen = height)) {
+	          if(~(bombAt(i, chosen) = 1)) {
+		      let aux = 0;
+	              let aux = aux + bombAt(i - 1, chosen); // Left
+		      let aux = aux + bombAt(i + 1, chosen); // Right
+		      let aux = aux + bombAt(i, chosen - 1); // Top
+		      let aux = aux + bombAt(i, chosen + 1); // Bottom
+		      let aux = aux + bombAt(i - 1, chosen - 1); // Upleft
+		      let aux = aux + bombAt(i + 1, chosen - 1); // Upright
+		      let aux = aux + bombAt(i - 1, chosen + 1); // Downleft
+		      let aux = aux + bombAt(i + 1, chosen + 1); // Downright
+		      do setElementAt(i, chosen, aux);
+	          }
+	          let chosen = chosen + 1;
+	      }
+	      let i = i + 1;
+	  }
+
+	  return;
+      }
+
+      method void dispose() {
+          do content.dispose();
+	  do Memory.deAlloc(this);
+	  return;
+      }
+
+      method int calcIndex(int x, int y) {
+          var int index;
+          let index = (y * width) + x;
+          return index;
+      }
+
+      method int elementAt(int x, int y) {
+          var int index;
+          let index = calcIndex(x, y);
+          return content[index];
+      }
+
+      method void setElementAt(int x, int y, int val) {
+          var int index;
+          let index = calcIndex(x, y);
+          let content[index] = val;
+	  return;
+      }
+
+      method void revealAt(int x, int y) {
+          var int index;
+	  let index = calcIndex(x, y);
+
+          if(x < 0) {
+	      return;
+	  }
+	  if(y < 0) {
+	      return;
+	  }
+	  if(x > (width - 1)) {
+	      return;
+	  }
+	  if(y > (height - 1)) {
+	      return;
+	  }
+
+          if(visibility[index] = 1) {
+	      return;
+	  }
+
+          let visibility[index] = 1;
+
+          if(~(content[index] = 0)) {
+	      return;
+	  }
+
+          // Cross your fingers for no stack overflow.
+	  // However, for a 9x9 board, it is kinda impossible
+          do revealAt(x - 1, y);
+	  do revealAt(x + 1, y);
+	  do revealAt(x, y - 1);
+	  do revealAt(x, y + 1);
+	  do revealAt(x - 1, y - 1);
+	  do revealAt(x + 1, y - 1);
+	  do revealAt(x - 1, y + 1);
+	  do revealAt(x + 1, y + 1);
+	  return;
+      }
+
+      method int bombAt(int x, int y) {
+          var int element;
+	  let element = calcIndex(x, y);
+	  
+	  if(x < 0) {
+	      return 0;
+	  }
+	  if(y < 0) {
+	      return 0;
+	  }
+	  if(x > (width - 1)) {
+	      return 0;
+	  }
+	  if(y > (height - 1)) {
+	      return 0;
+	  }
+
+          
+	  
+	  if(content[element] = 9) {
+	      return 1;
+	  }
+	  return 0;
+      }
+
+      method void printElementGM(int index) {
+          if(content[index] = 9) {
+	      do Output.printChar(42);
+	      return;
+	  }
+	  
+	  if(content[index] = 0) {
+	      do Output.printChar(32);
+	  } else {
+	      do Output.printInt(content[index]);
+	  }
+	  return;
+      }
+
+      method void printElement(int index) {
+          if(visibility[index] = 1) {
+	      do printElementGM(index);
+	      return;
+	  }
+	  do Output.printChar(95);
+	  return;
+      }
+
+      method void print(int god_mode) {
+          var int i;
+	  var int j;
+	  var int curr_line;
+	  let i = 0;
+	  let j = 0;
+	  let curr_line = 1;
+	  do Output.moveCursor(3, 0);
+	  while(~(i = size)) {
+	      if(j = 0) {
+	          do Output.printInt(curr_line);
+		  do Output.printChar(32);
+	          do Output.printChar(124);
+	      }
+
+              do Output.printChar(32);
+	      if(god_mode = 1) {
+	          do printElementGM(i);
+	      } else {
+	          do printElement(i);
+	      }
+	      do Output.printChar(32);
+	      
+	      let i = (i + 1);
+	      let j = (j + 1);
+	      if(j = width) {
+	          do Output.printChar(124);
+		  do Output.printChar(32);
+		  do Output.printInt(curr_line);
+	          do Output.println();
+		  let j = 0;
+		  let curr_line = (curr_line + 1);
+	      }
+	  }
+	  return;
+      }
+
+      method int step(int x, int y) {
+          var int element;
+	  let element = calcIndex(x, y);
+	  let element = content[element];
+	  if(element = 9) {
+	      return 1;
+	  }
+	  do revealAt(x, y);
+	  return 0;
+      }
+}

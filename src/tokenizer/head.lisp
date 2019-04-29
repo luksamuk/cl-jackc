@@ -240,7 +240,8 @@ identifier, and returns the matched identifier. If not, returns NIL."
 	(has-syntax-error nil))
     (head-checkpoint (head)
       (let ((buffer (head-next-char head)))
-	(if (numeric-char-p buffer)
+	(if (or (numeric-char-p buffer)
+		(member buffer *identifier-match-end-chars*))
 	    (setf has-syntax-error t)
 	    (progn (setf ident-list (append ident-list
 					    (list buffer)))
