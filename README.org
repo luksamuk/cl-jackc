@@ -143,6 +143,12 @@ the unit tests:
 (rove:run :cl-jackc/test)
 #+end_src
 
+* Extra information
+
+Below are links to more information related to this project.
+
+- [Portuguese] [[https://medium.com/@luksamuk/integrando-testes-autom%C3%A1ticos-para-common-lisp-com-docker-e-travis-ci-a3259a79a821][Integrando testes automáticos para Common Lisp com Docker e Travis CI]]
+
 * License
 
 This project is distributed under the MIT License.
