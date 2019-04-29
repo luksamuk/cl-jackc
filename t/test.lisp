@@ -27,6 +27,11 @@
 (defmacro match-token (test)
   `(head-match *the-head* ,test))
 
+(defmacro write-analyzer-test-cases (&rest filenames)
+  `(progn
+     ,@(loop for filename in filenames
+	  collect `(ok (analyze (open (script-file ,filename)))))))
+
 (defparameter *long-text-eof*
   (format nil "32768~%some text longer than a number"))
   
@@ -118,16 +123,18 @@
 	((match-token "}")            "}")))))
 
 (deftest analyzer-endurance-test
-  (mapc (lambda (file)
-	  (ok (analyze (open (script-file file)))))
-	'("simple.jack" "valid.jack" "valid2.jack"
-	  ;; Minesweeper code
-	  "Board.jack"  "Random.jack" "Main.jack"
-	  ;; Book files
-	  "book/ArrayTest/Main.jack"
-	  "book/ExpressionLessSquare/Main.jack"
-	  "book/ExpressionLessSquare/SquareGame.jack"
-	  "book/ExpressionLessSquare/Square.jack"
-	  "book/Square/Main.jack"
-	  "book/Square/SquareGame.jack"
-	  "book/Square/Square.jack")))
+  (write-analyzer-test-cases
+   ;; Basic files
+   "simple.jack"
+   "valid.jack"
+   "valid2.jack"
+   ;; Minesweeper files
+   "Board.jack"  "Random.jack" "Main.jack"
+   ;; Book files
+   "book/ArrayTest/Main.jack"
+   "book/ExpressionLessSquare/Main.jack"
+   "book/ExpressionLessSquare/SquareGame.jack"
+   "book/ExpressionLessSquare/Square.jack"
+   "book/Square/Main.jack"
+   "book/Square/SquareGame.jack"
+   "book/Square/Square.jack"))
