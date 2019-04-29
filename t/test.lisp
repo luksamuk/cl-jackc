@@ -118,9 +118,16 @@
 	((match-token "}")            "}")))))
 
 (deftest analyzer-endurance-test
-  (ok (analyze (open (script-file "simple.jack"))))
-  (ok (analyze (open (script-file "valid.jack"))))
-  (ok (analyze (open (script-file "valid2.jack"))))
-  (ok (analyze (open (script-file "Board.jack"))))
-  (ok (analyze (open (script-file "Random.jack"))))
-  (ok (analyze (open (script-file "Main.jack")))))
+  (mapc (lambda (file)
+	  (ok (analyze (open (script-file file)))))
+	'("simple.jack" "valid.jack" "valid2.jack"
+	  ;; Minesweeper code
+	  "Board.jack"  "Random.jack" "Main.jack"
+	  ;; Book files
+	  "book/ArrayTest/Main.jack"
+	  "book/ExpressionLessSquare/Main.jack"
+	  "book/ExpressionLessSquare/SquareGame.jack"
+	  "book/ExpressionLessSquare/Square.jack"
+	  "book/Square/Main.jack"
+	  "book/Square/SquareGame.jack"
+	  "book/Square/Square.jack")))
