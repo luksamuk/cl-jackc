@@ -1,0 +1,81 @@
+class Main {
+      static Board board;
+      static int   game_playing;
+      static int   input_line;
+
+      function int get_input(String message) {
+          var int valid_input;
+          var int input;
+          let valid_input = 0;
+          while(valid_input = 0) {
+              do Output.moveCursor(input_line, 0);
+              let input = Keyboard.readInt(message);
+              let valid_input = 1;
+              if(input < 1) {
+                  let valid_input = 0;
+              }
+              if(valid_input = 1) {
+                  if(input > 9) {
+                      let valid_input = 0;
+                  }
+              }
+          }
+          return input;
+      }
+
+      function void run_game() {
+          var int line;
+          var int column;
+          var char answ;
+          while(~(game_playing = 0)) {
+              do board.print(0);
+              do Output.println();
+
+              let line   = Main.get_input("Type a number (1-9) for line:   ");
+              let column = Main.get_input("Type a number (1-9) for column: ");
+
+              let line = board.step(column - 1, line - 1);
+              // Generate a new random number at each play. Probably the best
+              // way to ensure a new, random board, since RNG is not so random
+              let column = Random.rand();
+              
+              if(line = 1) {
+                  do Output.moveCursor(input_line, 0);
+                  do Output.printString("You stepped on a mine! Game over.");
+                  do Output.println();
+                  do Output.printString("Play again? (Y/N) ");
+                  let answ = Keyboard.readChar();
+                  if(answ = 89) {
+                      do board.dispose();
+                      let board = Board.new();
+                      do Output.moveCursor(input_line + 1, 0);
+                      let line = 0;
+                      while(~(line = 20)) {
+                          do Output.printChar(32);
+                          let line = line + 1;
+                      }
+                  } else {
+                      let game_playing = 0;
+                  }
+              }
+          }
+          do Output.println();
+          do Output.printString("Thanks for playing!");
+          return;
+      }
+      
+      function void main() {
+          do Random.init();
+          
+          let board = Board.new();
+          let game_playing = 1;
+          let input_line   = 15;
+
+          do Output.printString("Minesweeper for the nand2tetris Hack Platform");
+          do Output.println();
+          do Output.printString("v1.0 Copyright (c) 2019 Lucas Vieira");
+          do Main.run_game();
+          do board.dispose();
+          return;
+      }
+}

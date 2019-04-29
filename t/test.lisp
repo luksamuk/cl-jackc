@@ -122,4 +122,5 @@
   (ok (analyze (open (script-file "valid.jack"))))
   (ok (analyze (open (script-file "valid2.jack"))))
   (ok (analyze (open (script-file "Board.jack"))))
-  (ok (analyze (open (script-file "Random.jack")))))
+  (ok (analyze (open (script-file "Random.jack"))))
+  (ok (analyze (open (script-file "Main.jack")))))

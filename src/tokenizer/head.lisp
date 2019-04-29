@@ -10,7 +10,8 @@
 (defvar *integer-constant-symbols*
   (mapcar (lambda (x)
 	    (car (coerce x 'list)))
-	  (cdar (grammar-lookup :symbol)))
+	  (append (cdar (grammar-lookup :symbol))
+		  '("\"")))
   "Represents symbols which may come directly after integer constants,
 excluding whitespace.")
 
