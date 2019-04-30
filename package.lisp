@@ -35,17 +35,6 @@ usually related to language extension."))
    "Default interface for compiler. Exports procedures so the user can
 interact with the compiler."))
 
-(defpackage #:jackc-reader
-  (:use #:cl
-	#:jackc-utils
-	#:jackc-conditions)
-  (:export #:find-files
-	   #:read-files)
-  (:documentation
-   "Takes compilation arguments and configuration, passed by the
-user. For each given file, generates a file stream and passes it to
-the analyzer."))
-
 (defpackage #:jackc-tokenizer
   (:use #:cl
 	#:jackc-utils
@@ -89,3 +78,17 @@ to one of the desired outputs (XML or VM), outputting it to console."))
   (:documentation
    "Takes the console output of the parser, and writes it to the desired
 (.xml or .vm) file."))
+
+(defpackage #:jackc-reader
+  (:use #:cl
+	#:jackc-utils
+	#:jackc-conditions
+	#:jackc-analyzer
+	#:jackc-parser
+	#:jackc-writer)
+  (:export #:find-files
+	   #:read-files)
+  (:documentation
+   "Takes compilation arguments and configuration, passed by the
+user. For each given file, generates a file stream and passes it to
+the analyzer."))

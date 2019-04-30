@@ -26,7 +26,7 @@ directory, returns a list containing all the Jack files on it."
 	       "Bailing out.~&")
   "Error format string for general conditions on compilation process.")
 
-(defun read-files (file-list)
+(defun read-files (file-list analyze)
     "Dispatches a read stream for each file in FILE-LIST to the
 compiler's analyzer. Expects all files to be valid paths."
   (let ((current-stream nil)
@@ -36,8 +36,10 @@ compiler's analyzer. Expects all files to be valid paths."
 	       (handler-case
 		   (progn (setf current-stream (open file))
 			  ;; TODO: call analyzer for file
-			  (format t "Compiling file ~a...~&" file)
-			  (jackc-conditions:syntax-error-condition 2 3)
+			  (format t "~a file ~a...~&"
+				  (if analyze "Analyzing" "Compiling")
+				  file)
+			  ;; (analyze current-stream)
 			  )
 		 (error (err)
 		   (setf condition-raised t)
