@@ -139,18 +139,6 @@ other grammar rules.")
   "Determines the initial rule which the matcher should lookup at the beginning of
 every file.")
 
-(defun camelcase-keyword (keyword)
-  "Takes a KEYWORD and rewrites it in camel case style."
-  (coerce (loop with should-upcase = nil
-	     for char across (string-downcase (format nil "~a" keyword))
-	     if (char= char #\-)
-	     do (setf should-upcase t)
-	     else collect (if should-upcase
-			      (progn (setf should-upcase nil)
-				     (char-upcase char))
-			      char))
-	  'string))
-
 (defun grammar-lookup (keyword)
   "Looks up KEYWORD in the grammar and returns the rule list associated with it."
   (unless (null keyword)

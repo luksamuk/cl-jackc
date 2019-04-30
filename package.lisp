@@ -48,10 +48,10 @@ interact with the compiler."))
 	   #:head-checkpoint
 	   #:*the-head*
 	   #:with-new-head
-	   #:camelcase-keyword
 	   #:grammar-lookup
 	   #:*initial-var*
 	   #:builtin-rule-p
+	   #:quantifier-p
 	   #:quantified-rule-p
 	   #:exact-match-rule-p)
   (:documentation
@@ -68,7 +68,10 @@ also holding the language grammar specification."))
 grammar, generating a syntax tree. Redirects the output to the parser."))
 
 (defpackage #:jackc-parser
-  (:use #:cl)
+  (:use #:cl
+	#:jackc-tokenizer)
+  (:export #:parse-as-xml
+	   #:parse-as-vm)
   (:documentation
    "Takes the output of a file tokenization, and effectively compiles it
 to one of the desired outputs (XML or VM), outputting it to console."))

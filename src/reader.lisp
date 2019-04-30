@@ -35,11 +35,13 @@ compiler's analyzer. Expects all files to be valid paths."
        do (unwind-protect
 	       (handler-case
 		   (progn (setf current-stream (open file))
-			  ;; TODO: call analyzer for file
 			  (format t "~a file ~a...~&"
 				  (if analyze "Analyzing" "Compiling")
 				  file)
-			  ;; (analyze current-stream)
+			  ;; (let ((file-proto-ast (analyze current-stream)))
+			  ;;   (if analyze
+			  ;; 	(parse-as-xml file-proto-ast)
+			  ;; 	(parse-as-vm  file-proto-ast)))
 			  )
 		 (error (err)
 		   (setf condition-raised t)
