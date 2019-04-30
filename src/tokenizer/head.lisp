@@ -142,7 +142,6 @@ HEAD are restored."
        for current = (head-next-char head)
        always (char= token-char current))))
 
-;; Change this strategy! Does not work with consecutive comments.
 (defmethod head-skip-to-end-of-comment ((head tokenizer-head))
   (labels ((skip-comment (comment-start comment-end)
 	     (when (head-in-token-p head comment-start)
