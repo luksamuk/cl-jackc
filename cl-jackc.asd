@@ -7,7 +7,7 @@
   :description "Jack compiler for the nand2tetris Hack platform."
   :author "Lucas Vieira <lucasvieira@protonmail.com>"
   :license  "MIT"
-  :version "0.0.1"
+  :version "0.4.5"
   :serial t
   :depends-on (#:split-sequence)
   :components ((:file "package")
@@ -27,8 +27,11 @@
   :description "Test system for cl-jackc Jack compiler"
   :author "Lucas Vieira <lucasvieira@protonmail.com>"
   :license "MIT"
-  :version "0.0.1"
+  :version "0.4.5"
   :serial t
   :depends-on (#:cl-jackc #:rove)
   :components ((:module "t"
-			:components ((:file "test")))))
+			:components ((:file "package")
+				     (:file "util")
+				     (:file "tokenizer-test")
+				     (:file "analyzer-test")))))

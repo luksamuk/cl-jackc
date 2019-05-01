@@ -1,39 +1,9 @@
-;;;; test.lisp
+;;;; t/tokenizer-test.lisp
 ;;;; Part of cl-jackc.
 ;;;; Copyright (c) 2019 Lucas Vieira
 ;;;; This project is distributed under the MIT License.
 
-(defpackage #:cl-jackc/test
-  (:use #:cl
-	#:jackc-conditions
-	#:jackc-tokenizer
-	#:jackc-analyzer
-	#:rove))
-
 (in-package #:cl-jackc/test)
-
-(defparameter *system-pathname*
-  (asdf:system-source-directory :cl-jackc/test))
-
-(defun script-file (file-name)
-  (merge-pathnames (concatenate 'string "t/scripts/" file-name)
-		   *system-pathname*))
-
-(defmacro expected-results (&body body)
-  `(progn
-     ,@(loop for case in body
-	  collect `(ok (equal ,(car case) ,(cadr case))))))
-
-(defmacro match-token (test)
-  `(head-match *the-head* ,test))
-
-(defmacro write-analyzer-test-cases (&rest filenames)
-  `(progn
-     ,@(loop for filename in filenames
-	  collect `(ok (analyze (open (script-file ,filename)))))))
-
-(defparameter *long-text-eof*
-  (format nil "32768~%some text longer than a number"))
   
 (deftest tokenizer-test
   (testing "tokens"
@@ -121,20 +91,3 @@
 	((match-token ";")            ";")
 	((match-token "}")            "}")
 	((match-token "}")            "}")))))
-
-(deftest analyzer-endurance-test
-  (write-analyzer-test-cases
-   ;; Basic files
-   "simple.jack"
-   "valid.jack"
-   "valid2.jack"
-   ;; Minesweeper files
-   "Board.jack"  "Random.jack" "Main.jack"
-   ;; Book files
-   "book/ArrayTest/Main.jack"
-   "book/ExpressionLessSquare/Main.jack"
-   "book/ExpressionLessSquare/SquareGame.jack"
-   "book/ExpressionLessSquare/Square.jack"
-   "book/Square/Main.jack"
-   "book/Square/SquareGame.jack"
-   "book/Square/Square.jack"))
