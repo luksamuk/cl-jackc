@@ -25,6 +25,17 @@
      ,@(loop for filename in filenames
 	  collect `(ok (analyze (open (script-file ,filename)))))))
 
-(defparameter *long-text-eof*
-  (format nil "32768~%some text longer than a number"))
 
+(defun identical-p (a b)
+  (and (equal (type-of a) (type-of b))
+       (equal a b)))
+
+(defun depth-equal-p (list1 list2)
+  (when (= (list-length list1)
+	   (list-length list2))
+    (loop for elt1 in list1
+       for elt2 in list2
+       always (cond ((and (listp elt1)
+			  (listp elt2))
+		     (depth-equal-p elt1 elt2))
+		    (t (identical-p elt1 elt2))))))

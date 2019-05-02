@@ -4,6 +4,9 @@
 ;;;; This project is distributed under the MIT License.
 
 (in-package #:cl-jackc/test)
+
+(defparameter *long-text-eof*
+  (format nil "32768~%some text longer than a number"))
   
 (deftest tokenizer-test
   (testing "tokens"

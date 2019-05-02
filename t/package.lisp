@@ -8,4 +8,5 @@
 	#:jackc-conditions
 	#:jackc-tokenizer
 	#:jackc-analyzer
+	#:jackc-parser
 	#:rove))

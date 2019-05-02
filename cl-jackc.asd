@@ -34,4 +34,5 @@
 			:components ((:file "package")
 				     (:file "util")
 				     (:file "tokenizer-test")
-				     (:file "analyzer-test")))))
+				     (:file "analyzer-test")
+				     (:file "parser-test")))))
