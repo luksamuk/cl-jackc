@@ -7,18 +7,36 @@
 
 ;;; Syntax tree cleanup
 
-(defun cleanup-ast (syntax-tree)
+(defun cleanup-ast-1 (syntax-tree)
   (cond ((null syntax-tree) nil)
 	((listp (car syntax-tree))
 	 (cons (if (and (listp (caar syntax-tree))
 			(= (list-length (car syntax-tree)) 1))
-		   (cleanup-ast (caar syntax-tree))
-		   (cleanup-ast (car syntax-tree)))
-	       (cleanup-ast (cdr syntax-tree))))
+		   (cleanup-ast-1 (caar syntax-tree))
+		   (cleanup-ast-1 (car syntax-tree)))
+	       (cleanup-ast-1 (cdr syntax-tree))))
 	((quantifier-p (car syntax-tree))
-	 (cleanup-ast (cdr syntax-tree)))
+	 (cleanup-ast-1 (cdr syntax-tree)))
 	(t (cons (car syntax-tree)
-		 (cleanup-ast (cdr syntax-tree))))))
+		 (cleanup-ast-1 (cdr syntax-tree))))))
+
+(defun cleanup-ast-sublist-2 (sublist)
+  (cond ((and (= (list-length sublist) 2)
+	      (listp (cadr sublist))
+	      (eql (caadr sublist) :identifier))
+	 (cleanup-ast-2 (cadr sublist)))
+	(t (cleanup-ast-2 sublist))))
+
+(defun cleanup-ast-2 (syntax-tree)
+  (cond ((null syntax-tree) nil)
+	((listp (car syntax-tree))
+	 (cons (cleanup-ast-sublist-2 (car syntax-tree))
+	       (cleanup-ast-2 (cdr syntax-tree))))
+	(t (cons (car syntax-tree)
+		 (cleanup-ast-2 (cdr syntax-tree))))))
+
+(defun cleanup-ast (syntax-tree)
+  (cleanup-ast-2 (cleanup-ast-1 syntax-tree)))
 
 
 
@@ -75,6 +93,12 @@
   (with-output-to-string (*standard-output*)
     (ast->xml syntax-tree)))
 
+
+;;; Sexp emitter
+
+(defun parse-as-sexp (syntax-tree)
+  (with-output-to-string (*standard-output*)
+    (prin1 (cleanup-ast syntax-tree))))
 
 
 ;;; VM code emitter
