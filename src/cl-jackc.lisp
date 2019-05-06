@@ -16,7 +16,7 @@ XML file for inspection."
 		   (not (or (eql analyze :xml) (eql analyze :sexp))))
 	  (error (format nil "Unknown analysis case: ~a" analyze)))
 	(if-let ((file-list (jackc-reader:find-files file-or-dir)))
-	  (jackc-reader:read-files file-list :analyze analyze)
+	  (jackc-reader:read-files file-list analyze)
 	  (file-not-found-condition file-or-dir)))
     (error (err)
       (format t "~a~&" err)

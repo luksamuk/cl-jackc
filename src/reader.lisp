@@ -13,7 +13,7 @@ directory, returns a list containing all the Jack files on it."
 	      (equal (search ".jack" path-string :from-end t)
 		     (- (length path-string) 5)))
 	 (if-let ((file-path path-string))
-	   file-path
+	   (list file-path)
 	   nil))
 	((uiop:directory-exists-p path-string)
 	 (directory (concatenate 'string path-string "/*.jack")))
@@ -27,7 +27,7 @@ directory, returns a list containing all the Jack files on it."
   "Error format string for general conditions on compilation process.")
 
 (defun read-files (file-list analyze)
-    "Dispatches a read stream for each file in FILE-LIST to the
+  "Dispatches a read stream for each file in FILE-LIST to the
 compiler's analyzer. Expects all files to be valid paths."
   (let ((current-stream nil)
 	(condition-raised nil))
@@ -38,11 +38,15 @@ compiler's analyzer. Expects all files to be valid paths."
 			  (format t "~a file ~a...~&"
 				  (if analyze "Analyzing" "Compiling")
 				  file)
-			  ;; (let ((file-proto-ast (analyze current-stream)))
-			  ;;   (if analyze
-			  ;; 	(parse-as-xml file-proto-ast)
-			  ;; 	(parse-as-vm  file-proto-ast)))
-			  )
+			  (let* ((file-proto-ast (analyze current-stream))
+				 (post-analysis
+				  (case analyze
+				    (:xml  (parse-as-xml  file-proto-ast))
+				    (:sexp (parse-as-sexp file-proto-ast))
+				    (otherwise
+				     (error "Compilation not implemented!")))))
+			    (format t "Current parse result:~%~a~%" post-analysis)
+			    (error "Writer is not yet implemented!")))
 		 (error (err)
 		   (setf condition-raised t)
 		   (format t *error-format* file err)))
