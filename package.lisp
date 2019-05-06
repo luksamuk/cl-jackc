@@ -72,16 +72,19 @@ grammar, generating a syntax tree. Redirects the output to the parser."))
 	#:jackc-tokenizer)
   (:export #:cleanup-ast
 	   #:parse-as-xml
-	   #:parse-as-sexp)
+	   #:parse-as-sexp
+	   #:parse-as-vm)
   (:documentation
    "Takes the output of a file tokenization, and effectively compiles it
-to one of the desired outputs (XML or VM), outputting it to console."))
+to one of the desired outputs (XML, SEXP or VM), outputting it to
+console."))
 
 (defpackage #:jackc-writer
   (:use #:cl)
+  (:export #:write-file)
   (:documentation
    "Takes the console output of the parser, and writes it to the desired
-(.xml or .vm) file."))
+(.xml, .sexp or .vm) file."))
 
 (defpackage #:jackc-reader
   (:use #:cl

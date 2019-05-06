@@ -26,6 +26,9 @@ directory, returns a list containing all the Jack files on it."
 	       "Bailing out.~&")
   "Error format string for general conditions on compilation process.")
 
+(defvar *success-format* "~&~t~a successful!~&"
+  "Success format string for successful analysis and compilation steps.")
+
 (defun read-files (file-list analyze)
   "Dispatches a read stream for each file in FILE-LIST to the
 compiler's analyzer. Expects all files to be valid paths."
@@ -44,12 +47,13 @@ compiler's analyzer. Expects all files to be valid paths."
 				    (:xml  (parse-as-xml  file-proto-ast))
 				    (:sexp (parse-as-sexp file-proto-ast))
 				    (otherwise
-				     (error "Compilation not implemented!")))))
-			    (format t "Current parse result:~%~a~%" post-analysis)
-			    (error "Writer is not yet implemented!")))
+				     (parse-as-vm file-proto-ast)))))
+			    (write-file file post-analysis analyze)))
 		 (error (err)
 		   (setf condition-raised t)
 		   (format t *error-format* file err)))
 	    (close current-stream))
        when condition-raised do (return nil)
-       finally (return t))))
+       finally (progn (format t *success-format*
+			      (if analyze "Analysis" "Compilation"))
+		      (return t)))))

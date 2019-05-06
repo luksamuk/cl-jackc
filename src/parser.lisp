@@ -115,3 +115,8 @@ to a string, in s-expression format."
   (with-output-to-string (*standard-output*)
     (prin1 (cleanup-ast syntax-tree))))
 
+
+;;; VM emitter (compilation case)
+
+(defun parse-as-vm (syntax-tree)
+  (error "Compilation not implemented!"))

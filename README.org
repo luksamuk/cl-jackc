@@ -66,14 +66,15 @@ package, which depends on the other modules, and works as a frontend.
 - ~jackc-parser~
 
   Takes the output of a file analysis, and effectively compiles it
-  to one of the desired outputs (XML or VM), outputting it to console.
+  to one of the desired outputs (XML, VM or SEXP), outputting it to
+  console.
   
   Relates to the /CompilationEngine/ module, proposed in the book.
 
 - ~jackc-writer~
 
   Takes the console output of the parser, and writes it to the desired
-  (~.xml~ or ~.vm~) file.
+  (~.xml~, ~.sexp~ or ~.vm~) file.
 
 - ~jackc-reader~
 

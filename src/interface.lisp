@@ -5,11 +5,11 @@
 
 (in-package #:cl-jackc)
 
-(defun compile-exec (file-or-dir &key (analyze :xml)) ; TODO: default :analyze to nil
+(defun compile-exec (file-or-dir &key (analyze nil))
   "Compiles a file or directory. Output files will be written in the
 same directory as the Jack source files.
-Use ANALYZE to specify if the output file is supposed to be just an
-XML file for inspection."
+Use ANALYZE to specify if the output file is supposed to be just a
+:XML or :SEXP file for inspection."
   (handler-case
       (progn
 	(when (and analyze
