@@ -72,7 +72,7 @@ grammar, generating a syntax tree. Redirects the output to the parser."))
 	#:jackc-tokenizer)
   (:export #:cleanup-ast
 	   #:parse-as-xml
-	   #:parse-as-vm)
+	   #:parse-as-sexp)
   (:documentation
    "Takes the output of a file tokenization, and effectively compiles it
 to one of the desired outputs (XML or VM), outputting it to console."))
