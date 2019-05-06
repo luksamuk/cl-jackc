@@ -19,6 +19,23 @@ This compiler was completely written in Common Lisp.
 This means that the compiler is, for now, only fit for analyzing ~.jack~
 files and outputting XML files for inspection.
 
+** Qlot support
+
+This project uses qlot for both development and unit testing, so one
+should be able to use this tool to either run or develop the
+compiler.
+
+Qlot assumes that you have [[https://github.com/roswell/roswell][Roswell]] installed, preferably running
+SBCL. To install and configure qlot, simply run:
+
+#+begin_src bash
+ros install qlot
+qlot install
+#+end_src
+
+To use qlot along with SLIME on Emacs, see [[https://github.com/fukamachi/qlot][qlot]]'s repository
+documentation.
+
 * Modularization
 This project takes a different approach when compared to other
 projects of the book ([[https://github.com/luksamuk/cl-hackasm][cl-hackasm]], [[https://github.com/luksamuk/cl-hackvmtr][cl-hackvmtr]]), with respect to its
@@ -83,25 +100,91 @@ package, which depends on the other modules, and works as a frontend.
   the analyzer.
 
 * Usage
-This compiler is still alpha-quality software, so it might still not
-have any user interface yet. Nevertheless, it is not ready for usage.
+To use the compiler, one can consider the following ways:
 
-** Qlot support
+- ~roswell/jackc.ros~, the default compiler script, which can be used
+  from command line with Roswell;
+- ~run-jackc.sh~, which directly invokes the compiler script for command
+  line, using a Qlot context;
+- The ~cl-jackc~ package, which serves as interface to the compiler.
 
-This project uses qlot for both development and unit testing, so one
-should be able to use this tool to either run or develop the
-compiler.
+Please notice that this software is still beta quality and not ready
+for usage.
 
-Qlot assumes that you have [[https://github.com/roswell/roswell][Roswell]] installed, preferably running
-SBCL. To install and configure qlot, simply run:
+** Installing from Roswell
+
+It is possible to install this program directly from Roswell, though
+it is not recommended while the software is at beta stage.
+Simply run:
 
 #+begin_src bash
-ros install qlot
-qlot install
+ros install luksamuk/cl-jackc
 #+end_src
 
-To use qlot along with SLIME on Emacs, see [[https://github.com/fukamachi/qlot][qlot]]'s repository
-documentation.
+After the required operations, the script ~jackc~ should be available to
+use from command line:
+
+#+begin_src bash
+jackc /path/to/files/and/dirs [args...]
+#+end_src
+
+When using ~jackc~, any separate given path is treated as a single,
+different project. Each file of a project can be separately
+compiled. However, if a directory name is passed instead of the path
+to a Jack code file, ~jackc~ will attempt to find all Jack files on the
+first level of such directory and compile each one of them. Each
+compiled file will be written in the same directory as the code file.
+
+As for extra arguments, ~jackc~ allows ~--xml~ and ~--sexp~, which indicate
+specific syntax analysis steps. When both are informed, ~--xml~ takes
+precedence. More information can be seen on the compiler's help
+output.
+
+~jackc~ does not demand any order of arguments, so one can safely
+interleave arguments and paths when using the script.
+
+Passing no arguments shows a usage and help text.
+
+** Using the bundled script
+
+Given that Roswell and Qlot are installed, and that Qlot is correctly
+configured in the project's directory, the compiler can be invoked
+from command line using the ~run-jackc.sh~ script.
+
+#+begin_src bash
+./run-jackc.sh files-or-dirs-or-args...
+#+end_src
+
+More information on script usage can be found in the previous
+subsection (/Installing from Roswell/).
+
+** Using from REPL
+
+When using ~cl-jackc~ from a REPL (SLIME, Roswell, Qlot or any other
+means), provided that it has access to the ~cl-jackc~ system (loadable
+using Quicklisp), one can just load and use the default interface:
+
+#+begin_src lisp
+(ql:quickload :cl-jackc)
+(cl-jackc:compile-exec "/path/to/file/or/dir" :analyze case)
+#+end_src
+
+~COMPILE-EXEC~ takes a single path, which can point to a single file or
+directory. The key argument ~:ANALYZE~ specifies whether the file should
+be analyzed; if so, the user may pass one of the ~:XML~ or ~:SEXP~
+keywords.
+
+~:ANALYZE~ can be ignored. If so, it defaults to ~NIL~, which indicates
+that a full compilation of the file(s) should be done, and not just
+syntax analysis.
+
+Notice that, while it is already possible to invoke a full compilation
+for a path, the compiler will fail unless a syntax analysis case is
+specified, due to compilation progress (this will change shortly).
+
+Any compilation or syntax analysis files generated are saved with the
+same name of its Jack file, except for its extension, on the same
+folder of the source code.
 
 * Unit testing
 

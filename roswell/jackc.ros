@@ -1,0 +1,63 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+
+;;;; jackc.ros
+;;;; Part of cl-jackc.
+;;;; Copyright (c) 2019 Lucas Vieira
+;;;; This project is distributed under the MIT License.
+
+(progn (ros:ensure-asdf)
+       (unless (find-package :cl-jackc)
+	 (ql:quickload :cl-jackc :silent t)))
+
+(defpackage :ros.script.jackc
+  (:use #:cl #:cl-jackc))
+
+(in-package #:ros.script.jackc)
+
+(defmacro format-usage (&body strings)
+  `(format
+    t
+    (concatenate 'string
+		 ,@(loop for string in strings
+		      collect (concatenate 'string string "~%")))))
+
+(defun show-usage ()
+  (format-usage
+    "cl-jackc v0.4.8"
+    "Copyright (c) 2019 Lucas Vieira"
+    "Distributed under the MIT License.~%"
+    "Usage: jackc /path/to/files/or/dirs~%"
+    "Args:"
+    "  --xml      Outputs abstract syntax tree in XML format."
+    "  --sexp     Outputs abstract syntax tree in raw s-expression format.~%"
+    "This a compiler for the Jack language, which takes one or a series of"
+    ".jack files and turns them into their respective .vm files, so they can"
+    "be further manipulated. This tool was written in Common Lisp.~%"
+    "Please notice that this compiler is currently Chapter-10 compliant only,"
+    "serving the only purpose of showing the compiler's syntax analysis."
+    "Therefore, any attempt to perform a full compilation of a project will"
+    "fail."))
+
+(defun main (&rest argv)
+  (macrolet ((find-arg (argtest)
+	       `(loop for arg in argv thereis ,argtest))
+	     (clean-args (arglist)
+	       `(remove-if (lambda (x) (or ,@(loop for args in arglist
+					   collect `(string= x ,args))))
+			   argv)))
+    (let ((xml-out  (find-arg (string= arg "--xml")))
+	  (sexp-out (find-arg (string= arg "--sexp")))
+	  (files    (clean-args ("--xml" "--sexp"))))
+      (if (not files)
+	  (show-usage)
+	  (loop for file in files
+	     do (compile-exec file
+			      :analyze (cond (xml-out :xml)
+					     (sexp-out :sexp)
+					     (t nil))))))))
+
+;;; vim: set ft=lisp lisp:
