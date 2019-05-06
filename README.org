@@ -34,7 +34,7 @@ package, which depends on the other modules, and works as a frontend.
 
 ** Module listing
 
-- ~cl-jackc~
+- ~cl-jackc (interface)~
 
   Default interface for compiler. Exports procedures so the user can
   interact with the compiler.

@@ -14,7 +14,7 @@
                (:module "src"
 			:components ((:file "utils")
 				     (:file "conditions")
-				     (:file "cl-jackc")
+				     (:file "interface")
 				     (:file "reader")
 				     (:module "tokenizer"
 					      :components ((:file "grammar")
