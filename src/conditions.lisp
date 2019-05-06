@@ -25,6 +25,11 @@
 	      :accessor blown-number
 	      :documentation "Integer value which would overflow.")))
 
+(define-condition grammar-error (error)
+  ((%description :initarg :description
+		 :accessor description
+		 :documentation "Description of the grammar error condition.")))
+
 
 ;; Method implementations for readable conditions
 
@@ -46,6 +51,10 @@
 	  (column-number object)
 	  (blown-number object)))
 
+(defmethod print-object ((object grammar-error) stream)
+  (format stream "Grammar compilation error: ~a"
+	  (description object)))
+
 
 ;; Helper functions for throwing conditions
 
@@ -63,4 +72,6 @@
 	 :line line-number
 	 :column column-number
 	 :number blown-number))
-
+(defun grammar-error-condition (description)
+  (error 'grammar-error
+	 :description description))

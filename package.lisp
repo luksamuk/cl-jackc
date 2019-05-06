@@ -18,11 +18,13 @@ usually related to language extension."))
 	   #:syntax-error
 	   #:unexpected-eof
 	   #:integer-overflow
+	   #:grammar-error
 	   #:print-object
 	   #:file-not-found-condition
 	   #:syntax-error-condition
 	   #:unexpected-eof-condition
-	   #:integer-overflow-condition)
+	   #:integer-overflow-condition
+	   #:grammar-error-condition)
   (:documentation
    "Definitions for compiler-related conditions."))
 

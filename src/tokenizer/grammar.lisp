@@ -7,7 +7,7 @@
 
 
 
-(defparameter *grammar-rules*
+(defparameter *jack-grammar-rules*
   '(;;;  Lexical elements
     (:keyword          ((:or "class" "constructor" "function"
 			     "method" "field" "static" "var"
@@ -126,11 +126,7 @@ it is assumed to be the newline character.")
 engine.")
 
 
-(defparameter *grammar*
-  (loop with hashtable = (make-hash-table)
-     for rule in *grammar-rules*
-     do (setf (gethash (car rule) hashtable) (cadr rule))
-     finally (return hashtable))
+(defparameter *grammar* nil
   "Holds the de-facto grammar used for lookup. Each grammar rule is the key to an
 element on a hash table, and matches exactly one rule list, which may also reference
 other grammar rules.")
@@ -164,3 +160,56 @@ every file.")
 by the expected token)."
   (and (= (list-length rule-list) 2)
        (stringp (cadr rule-list))))
+
+(defun compile-grammar (grammar-rules)
+  "Compiles the grammar rules of a language, checking exact-match cases for
+validity. Generates a hash table with all the rules for faster consulting."
+  (labels ((find-rule (rule-name)
+	     (if-let ((pre-match (assoc rule-name grammar-rules)))
+	       (if (and (listp (cadr  pre-match))
+			(listp (caadr pre-match)))
+		   (caadr pre-match)
+		   (grammar-error-condition
+		    (format nil "Grammar syntax error on rule ~a."
+			    rule-name)))
+	       (grammar-error-condition
+		(format nil "The rule ~a does not exist in grammar."
+			rule-name))))
+	   
+	   (test-exact-match (rule)
+	     (let ((match (find-rule (car rule))))
+	       (cond ((not (eql (car match) :or))
+		      (grammar-error-condition
+		       (format nil
+			       (concatenate 'string
+					    "The rule ~a does not represent "
+					    "a disjunction of terminals.")
+			       (car rule))))
+		     ((not (member (cadr rule) (cdr match) :test #'equal))
+		      (grammar-error-condition
+		       (format nil (concatenate 'string
+						"The terminal ~a is not part of "
+						"the rule ~a.")
+			       (cadr rule)
+			       (car rule))))
+		     (t t))))
+	   
+	   (traverse-check-rules (rule-list)
+	     (loop for rule in rule-list
+		when (listp rule)
+		do (if (exact-match-rule-p rule)
+		       (test-exact-match rule)
+		       (traverse-check-rules rule)))))
+    
+    (traverse-check-rules grammar-rules)
+    (loop with hashtable = (make-hash-table)
+       for rule in grammar-rules
+       do (setf (gethash (car rule) hashtable)
+		(cadr rule))
+       finally (return hashtable))))
+
+
+;;; Compile grammar right after file is loaded.
+;;; This should speed things up a bit when running the compiler as a
+;;; Lisp image.
+(setf *grammar* (compile-grammar *jack-grammar-rules*))
