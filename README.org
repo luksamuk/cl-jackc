@@ -30,6 +30,7 @@ SBCL. To install and configure qlot, simply run:
 
 #+begin_src bash
 ros install qlot
+cd /path/to/cl-jackc
 qlot install
 #+end_src
 
@@ -100,28 +101,30 @@ package, which depends on the other modules, and works as a frontend.
   the analyzer.
 
 * Usage
-To use the compiler, one can consider the following ways:
+
+There are three ways to use the compiler:
 
 - ~roswell/jackc.ros~, the default compiler script, which can be used
   from command line with Roswell;
 - ~run-jackc.sh~, which directly invokes the compiler script for command
   line, using a Qlot context;
-- The ~cl-jackc~ package, which serves as interface to the compiler.
+- The ~cl-jackc~ package, which works as an interface to the compiler.
 
-Please notice that this software is still beta quality and not ready
+Please notice that this software is still beta quality and is not ready
 for usage.
 
 ** Installing from Roswell
 
 It is possible to install this program directly from Roswell, though
 it is not recommended while the software is at beta stage.
+
 Simply run:
 
 #+begin_src bash
 ros install luksamuk/cl-jackc
 #+end_src
 
-After the required operations, the script ~jackc~ should be available to
+After the required operations, the script ~jackc~ should be available for
 use from command line:
 
 #+begin_src bash
@@ -152,7 +155,7 @@ configured in the project's directory, the compiler can be invoked
 from command line using the ~run-jackc.sh~ script.
 
 #+begin_src bash
-./run-jackc.sh files-or-dirs-or-args...
+./run-jackc.sh /path/to/files/and/dirs [args...]
 #+end_src
 
 More information on script usage can be found in the previous
@@ -162,7 +165,7 @@ subsection (/Installing from Roswell/).
 
 When using ~cl-jackc~ from a REPL (SLIME, Roswell, Qlot or any other
 means), provided that it has access to the ~cl-jackc~ system (loadable
-using Quicklisp), one can just load and use the default interface:
+using Quicklisp), just load and use the default interface:
 
 #+begin_src lisp
 (ql:quickload :cl-jackc)
@@ -174,9 +177,9 @@ directory. The key argument ~:ANALYZE~ specifies whether the file should
 be analyzed; if so, the user may pass one of the ~:XML~ or ~:SEXP~
 keywords.
 
-~:ANALYZE~ can be ignored. If so, it defaults to ~NIL~, which indicates
-that a full compilation of the file(s) should be done, and not just
-syntax analysis.
+~:ANALYZE~ can also be ignored. If so, it defaults to ~NIL~, which
+indicates that a full compilation of the file(s) should be done, and
+not just syntax analysis.
 
 Notice that, while it is already possible to invoke a full compilation
 for a path, the compiler will fail unless a syntax analysis case is
@@ -188,7 +191,7 @@ folder of the source code.
 
 * Unit testing
 
-This projects uses [[https://github.com/fukamachi/rove][rove]] for unit testing. For using it, a system
+This project uses [[https://github.com/fukamachi/rove][rove]] for unit testing. For using it, a system
 called ~cl-jackc/test~ is provided, which includes a number of test
 suites for parts of the compiler.
 
