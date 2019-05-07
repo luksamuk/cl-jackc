@@ -125,15 +125,14 @@ it is assumed to be the newline character.")
   "Enumerates builtin lexical elements which are implemented on the matching
 engine.")
 
+(defparameter *initial-var* :class
+  "Determines the initial rule which the matcher should lookup at the beginning of
+every file.")
 
 (defparameter *grammar* nil
   "Holds the de-facto grammar used for lookup. Each grammar rule is the key to an
 element on a hash table, and matches exactly one rule list, which may also reference
 other grammar rules.")
-
-(defparameter *initial-var* :class
-  "Determines the initial rule which the matcher should lookup at the beginning of
-every file.")
 
 (defun grammar-lookup (keyword)
   "Looks up KEYWORD in the grammar and returns the rule list associated with it."
