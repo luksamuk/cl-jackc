@@ -6,69 +6,141 @@
 #+LaTeX_HEADER: \usepackage{microtype}
 #+LaTeX_HEADER: \usepackage{listings}
 #+LaTeX_HEADER: \usepackage{hyperref}
+#+LaTeX_HEADER: \usepackage{mathtools}
 #+LaTeX_HEADER: \hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black, urlcolor=black}
-#+OPTIONS: toc:nil num:1 email:t
+#+OPTIONS: toc:nil num:1 email:t footer:nil
 
-\begin{center}
-\textit{ABSTRACT}
-\end{center}
+#+begin_center
+/ABSTRACT/
+#+end_center
 
-\par\noindent
-~cl-jackc~ is an implementation of a compiler for the Jack programming
-language. It uses its own $LL(1)$ grammar engine, written from scratch
-in Common Lisp. This article outlines the domain-specific language
-for specifying grammar rules, its key points, and my experience
-on building the matching engine which interprets the grammar
-language.
+#+LaTeX: \par\noindent
+~cl-jackc~[fn:5] is an implementation of a compiler for the Jack
+programming language. It uses its own grammar engine for $LL(1)$
+grammars, written from scratch in Common Lisp. This article outlines
+the domain-specific language for specifying grammar rules, its key
+points, and my experience on building the matching engine which
+interprets the grammar language.
 
 
 * Introduction
 
-# Brief project introduction and motivation.
-# Discuss the three key points on sicp.
+# Missing stuff.
 Building programming languages are often an arduous, but fun task. Some
 of the work lies on the designing of the language and its syntactical
 elements /per se/. The rest of the work lies on building the tools
 to make the language work, namely the compiler toolchain. In this
 article, I discuss a fragment of the compiler toolchain for the Jack
-programming language, one of the projects proposed in ~[Nisan08]~, which
-is the parser for the syntax analysis of the Jack programming language.
+programming language, one of the projects proposed by Nisan and
+Schocken (2008) cite:nand2tetris, which is the parser for the syntax
+analysis of the Jack programming language.
 
-The book provides a very clear grammar for Jack, and so the job of the
-reader is to simply write a compiler for the language, in two
-different projects[fn:4]. Here I outline some of my strategies to build such
-an ambitious project, and how I dealt with it, while having zero
-experience.
+The related book provides a very clear grammar for Jack, and so the
+job of the reader is to simply write a compiler for the language, in
+two different projects[fn:4]. Here I show some of my strategies to
+build the first of the projects, while having zero experience on
+writing compilers.
 
-As per direct influence of ~[Abe96]~, I did not view the compiler
-architecture as a rigid hierarchy of software modules which
-interact with each other. While the modularized approach is still
-maintained, especially for organization purposes, most of the syntax
-analyzer was written as layers of software comprising of certain
-abstractions, as if each of these layers were languages themselves
-that could be used to build upper abstraction layers.
+Nisan and Schocken (2008) cite:nand2tetris provide a blueprint for the
+project software architecture in the Java language, so that the job of
+the reader is sped up. This model, however, obeys certain principles
+of object-oriented design which describe a very rigid software
+architecture. Due to influence of Abelson and Sussman (1996)
+cite:sicp, when primarily thinking of what to do, I did not view the
+compiler architecture as a rigid hierarchy of software modules,
+interacting with each other. While the modularization is still
+maintained, mostly for file organization and for keeping some degree
+of similarity with the proposed implementation, the syntax analyzer
+was primarily designed as layers of software comprising of certain
+abstractions, as if each of these layers were /domain-specific
+languages/ themselves that could be used to build upper abstraction
+layers.
 
-This approach led me into building a specific language to represent
-the grammar of the Jack programming language in the topmost level. It
-also acquired the intended effect of having an underlying robust,
-simple and well-organized codebase. The details and operation of this
-topmost grammar language are detailed as follows.
+This approach led me to build a de-facto /domain-specific language/
+to represent the grammar of the Jack programming language in the
+topmost level. It also acquired the intended effect of having an
+underlying robust, simple and well-organized codebase. The formalisms
+and operation of this topmost grammar language are detailed as follows.
 
-* Grammar syntax
+* Grammars
+
+Newton (2006)cite:newton2006 states that a grammar is a formalism
+originally conceived for defining formal languages. The fundamental
+elements of grammars are the /rules/, which demonstrate how to generate
+a language's /words/.
+
+Let there be a grammar $G$, which is a tuple $(V, \Sigma, R, P)$
+where:
+
+- $V$ is a finite set of all language /variables/;
+- $\Sigma$ is the language's alphabet, where $V \cap \Sigma =
+  \varnothing$;
+- $R$ is a finite set comprised of ordered pairs known as /rules/, and
+- $P \in V$ is a variable known as a starting point.
+
+A grammar $G$ is valid when it is possible to generate /sentential
+forms/ from its rules, such that these /forms/ are not populated by any
+/variable/, but only with /terminals/ ($\alpha \in \Sigma$). These special
+/forms/ are often called /words/.The set of all /words/ generated by a
+grammar is called $L(G)$, or /language of $G$/.
+
+It is said that a /word/ $\omega$ belongs to $L(G)$ if, and only if,
+$\omega$ can be derived in $n$ steps from $G$'s /rules/.
+
+The /rules/ of a grammar, as already stated, are ordered pairs. The
+first element of the pair states /what should be replaced/, and the
+second element states /what is the replacement/. For example, consider
+the following rules.
+
+\begin{align}
+A &\rightarrow aA\\
+A &\rightarrow B\\
+B &\rightarrow \lambda
+\end{align}
+
+These /rules/ belong to a certain type of grammar which will be crucial
+to the incoming object of discussion. Given a starting point $A$, as
+per Rule 1, it is possible to infer that this language is capable of
+generating /words/ with an arbitrary number of "$a$" /terminals/, plus a
+dangling "$A$" variable at the end. After that, $A$ can be transformed
+into $B$ (Rule 2), and $B$ is then transformed into the /empty word/
+$\lambda$ (Rule 3), which acts as the stopping point for grammar
+generation, leaving only a /word/ comprised of /terminals/. This language
+may also be represented as $\{a\}^{*}$.
+
+The previous example is interesting because the left-hand part of all
+rules is comprised only of /variables/. This means that, for any given
+variable which may appear in a /sentential form/, that single variable
+must have one or more corresponding rules which replace
+it. Furthermore, it is only necessary to find and replace /variables/ in
+the /sentential form/, and never to analyze the disposition of
+/terminals/, since there are no /rules/ requiring this procedure.
+
+A grammar for the Jack language cite:nand2tetris is written using
+exactly this model. Each of the /rules/ are a simple pair, where the
+first component is a /variable/ which may appear anywhere, and so it can
+be transformed by another given rule of the grammar. Using this simple
+theorem, it is possible to write an application which takes a /source
+code/ and parses it, so that this analysis indicates whether the /code/
+is a /word/ of the Jack /language/ or not.
+
+#+TODO: What is an LL(1) grammar?
+
+* Compiler's grammar syntax
 
 The compiler's grammar language is written using s-expressions, since
 the application itself is written in Common Lisp. The chosen language
-provides powerful abstractions for dealing with lists. Since the
-grammar itself is written as an abstract syntax tree, Lisp makes it
-easier to traverse each rule.
+provides powerful abstractions for dealing with lists. The grammar is
+written as an abstract syntax tree, so that Lisp makes it easier to
+traverse each rule.
 
 A grammar is a list of rules. Each rule is a pair of two elements: a
 /name/ and a /match/. There must be at least one rule enumerating
 /terminals/, which are expected textual elements.
 
 /Names/ are Lisp keywords[fn:2], and therefore are prepended with a
-double colon (~:)~, so that they are agnostic to the namespace[fn:1]
-they're in.
+double colon, so that they are agnostic to the namespace[fn:1] they're
+in.
 
 Figure [[fig:class_rule]] is a transcribed fragment of a single rule
 for matching with a class structure of the Jack programming
@@ -83,27 +155,36 @@ language. The rule is provided for illustrative purposes.
            (:many :subroutine-dec)
            (:symbol "}")))
 #+end_src
-\hfill \break
+#+LaTeX: \hfill \break
 
 The /match/ component of a rule is, in itself, a list, and so it carries
 its own meaning. The /match/ may be populated by other /keyword names/,
 /quantified rules/, /precise rules/ and /exact-matches/, which must also be
 specified in the grammar itself.
 
-The previous code snippet offers a way to expect a class definition in
-the Jack programming language ~[Nisan08]~. To recognize a class, the
-grammar expects the match of a /precise/ pattern, in the following
-order:
+Any valid Jack source code begins with a class definition, and so
+~:CLASS~ corresponds to the starting point for the matching engine. The
+code snippet at Figure [[fig:class_rule]] offers a way to expect a class
+definition in the Jack programming language (adapted from Nisan and
+Schocken (2005) cite:nand2tetris). To recognize a class, the grammar
+expects the match of a /precise/ pattern, in the following order:
 
-- An exact match with the keyword ~class~;
+- An exact match with the keyword "~class~";
 - The class's name, whatever it may be;
 - An exact match with the symbol ~{~;
 - Zero or more variable declarations, whatever it may be;
 - Zero or more subroutine declarations, whatever it may be;
 - An exact match with the symbol ~}~.
 
+The matching engine works recursively, as it is suggested from the
+/wishful thinking/ approach (Abelson and Sussman (1996) cite:sicp).
 These operations (as well as the /match/ portion of the rule itself)
 require better clarification of their underlying structure.
+
+A valid grammar, when written in the grammar language, is comprised of
+atomic rules, which enumerate most /primitives/, and of compound rules,
+which enumerate a single kind of /primitive/ and some /means of
+combination/ for the rest of the rules.
 
 ** Atomic rules
 
@@ -125,8 +206,10 @@ they are enumerated as follows:
   for Lisp.
 
 Since matching these rules require knowledge of what a ~:SYMBOL~ and a
-~:KEYWORD~ are, these rules must always be defined for any grammar. This
-aspect will be discussed later, in greater detail.
+~:KEYWORD~ are, these rules must always be defined for any grammar. They
+can also be compared to the alphabet $\Sigma$ of a formal grammar
+(Vieira (2006) cite:newton2006). This aspect will be discussed later,
+in greater detail.
 
 In a rule such as ~(:KEYWORD "class")~, the element ~"class"~ is a
 /terminal/, as it is raw text expected to be at the matching source code
@@ -155,18 +238,18 @@ keywords:
   process does not fail the rest of the grammar match (/zero-or-one/).
 - ~:MANY~: Attempts to match the group of all enclosed sub-rules
   exhaustively, and keeps collecting the matching results until the
-  match fails (/zero-or-more/).
+  repeating match fails (/zero-or-more/).
 
 A /quantified rule/ such as =(:many :identifier)=, for example, will keep
 collecting identifiers until there are no more identifiers to be
 collected. When matching an identifier fails, then all previously
 matched identifiers are collected. If no identifier was matched, the
-match results in a neutral value, but not on failure.
+match results in a neutral value, but never fails.
 
 A rule such as ~(:maybe :identifier :integer-constant)~ will attempt to
 match an identifier and then an integer constant. If any of those
 structures are not matched, then the match results in a neutral
-value, but not on failure.
+value, but never fails.
 
 The rule ~(:or :identifier :integer-constant)~ attempts to match an
 identifier. If the identifier is not found, it attempts to match an
@@ -181,8 +264,9 @@ second element is an expected /terminal/.
 
 The /terminal/ element of an /exact-match rule/ must belong to a
 disjunctively-quantified rule, where each element of the disjunction
-is a /terminal/ text as well. This rule is not supposed to be used in
-matching time, though it is important for grammar verification.
+is a /terminal/ text as well. This associated, disjunctive rule is not
+supposed to be used in matching time, though it is important for
+grammar verification.
 
 Any /exact-match rule/ which uses a non-existing disjunctive rule, or
 uses a /terminal/ which does not belong to the associated disjunctive
@@ -209,8 +293,8 @@ rule/, only changing the context where such /precise rule/ fails.
 Any part of a /match/ element of a rule, which is also /compound/, but
 does not fall into the previous categories, is a /precise rule/. In
 other words, such rules are surrounded by parenthesis, but their first
-element are not quantifiers, and they do not fit the /exact-match rule/
-specification.
+element is not a quantifier, and they also do not fit the /exact-match
+rule/ specification.
 
 These /compound rules/ are basically enclosings for sub-rules which must
 "travel" as a group, and so all of their sub-rules must always
@@ -234,9 +318,13 @@ which are common to most languages.
 - ~:SYMBOL~: A disjunctively-quantified rule enumerationg all text
   /terminals/ of the language which are /language symbols/.
 
-Figure [[fig:jack_obligatory]] shows a snippet showing the Jack language's
+Keywords and symbols enumerate nothing less than the alphabet $\Sigma$
+of a language, and therefore act as the primary /terminals/ for any
+other grammar rules.
+
+Figure [[fig:jack_obligatory]] is a snippet showing the Jack language's
 keywords and symbols, based on the language's grammar specification
-~[Nisan08, pp. 208-209]~.
+(Nisan and Schocken (2008), pp. 208-209 cite:nand2tetris).
 
 #+name: fig:jack_obligatory
 #+label: fig:jack_obligatory
@@ -253,7 +341,7 @@ keywords and symbols, based on the language's grammar specification
                  ">" "=" "~")))
 #+end_src
 
-** Code comments
+** Code commentary
 
 Comments in any language are often surrounded by two tokens, which are
 equivalent to text /terminals/. Comment detection, however, is not
@@ -264,8 +352,8 @@ The matching engine's topmost structure is responsible for comparing
 tokens which are already assumed to be valid, and comment delimiters
 (plus the contents of any comment) are not supposed to be valid
 tokens. For that reason, the comments are defined using an outside
-structure, a list of pairs which enumerate the tokens which enclose
-any comments[fn:3].
+structure, a list of pairs which enumerate the tokens enclosing any
+comments[fn:3].
 
 Let us take the Jack programming language as an example, as the
 matching engine was primarily built for it. A pair, in Lisp notation,
@@ -285,12 +373,13 @@ is not informed, then that delimiter must be a =#\Newline= character.
 The grammar language fundamentals have been outlined. /Terminals/,
 /exact-matches/ and /built-in rules/ act as primitives, while other
 /compound rules/ act as means of combination. At this point it is
-important to discuss its /means of abstraction/ of the language.
+important to discuss the language's /means of abstraction/.
 
 Abstraction implies the building of structures which would allow the
 creation of the /rules/ themselves. Figure [[fig:class_rule]] already hints
-at what is possible to make of such language. As a better example, we
-should take a simpler example, as described in Figure [[fig:var_example]].
+at what is possible to make of the grammar language. For a better
+understanding, we should take a simpler example, as described in
+Figure [[fig:var_example]].
 
 #+name: fig:var_example
 #+label: fig:var_example
@@ -308,11 +397,11 @@ should take a simpler example, as described in Figure [[fig:var_example]].
 
 (:var-decls ((:many :var-decl)))
 #+end_src
-\hfill \break
+#+LaTeX: \hfill \break
 
-The example outlined in [[fig:var_example]] is by no means practical,
-since there are more sophisticated ways of matching a variable
-declaration, but it should be enough for a brief
+The example outlined in Figure [[fig:var_example]] is by no means
+practical, since there are more sophisticated ways of matching a
+variable declaration, but it should be enough for a brief
 explanation. Additionally, the obligatory ~:SYMBOL~ and ~:KEYWORD~ rules
 were omitted, as they are potentially implied by context.
 
@@ -329,22 +418,30 @@ char  downcase_a = 97;
 bool  false_val  = 0;
 float this_fails = 3;
 #+end_src
-\hfill \break
+#+LaTeX: \hfill \break
 
 The file will fail a match for a ~:VAR-DECL~ in line 4, since the ~:TYPE~
 rule will not match the keyword ~"float"~. It will, however, not fail
-entirely, giving the results of the first three lines, due to the
-~:MANY~ quantifier. This could be considered an unwanted grammar runtime
-bug, which could be fixed through a careful redefinition of grammar
-rules.
+the entirety of the match process, giving the results of the first
+three lines. This happens due to the ~:MANY~ quantifier.
+
+Since this quantifier is enclosed in a /precise match/ context, in the
+definition of ~:VAR-DECLS~, if no ~:VAR-DECL~ were matched, the whole
+match process would fail, and raise a condition in the matching
+engine.
+
+For the example given at Figure [[fig:var_file]], the match process would
+not fail with a syntax error. This is an undesided grammar runtime
+bug. The programmer could mitigate this problem with a /terminal/ after
+the quantified variable declarations.
 
 * Conclusion
 
-$LL(1)$ grammars are certainly of great interest when designing a
+Grammar engines are certainly of great interest when designing a
 language, and so they often shape the way languages work to ensure
 that the syntax analysis of said language can be done by such a
-grammar. They are also seemingly simple to implement, which guaratees
-easier debugging.
+engine. They also yield seemingly simple structures when implemented,
+which guarantees easier debugging.
 
 The time I spent building the matching engine was satisfactory, and
 ended up producing the discussed grammar language due to the way my
@@ -362,22 +459,21 @@ grammar language, and then the language itself comes on top.
 This structure ended up being very interesting, because the software
 itself is now robust, and not necessarily specific to the Jack
 programming language. Further exploration can be made to make it work
-with other languages. I will soon attempt to build a Lisp dialect by
-just swapping the rule set of the Jack compiler. Performing this new
-experiment would lay the foundation to a future project.
+with other languages, and maybe even to analyze itself. I intend to
+soon attempt to build a Lisp dialect by just swapping the rule set of
+this matching engine. Performing this new experiment would lay the
+foundation to one of my future projects.
 
-* References
 
-\par \noindent
-~[Abe96]~ Abelson, H.; Sussman, G. J.; Sussman, J.. /"Structure and
-Interpretation of Computer Programs"/. MIT Press, 1996.
-\newline
-\par \noindent
-~[Nisan08]~ Nisan, N.; Schocken, S.. /"The Elements of Computing
-Systems: Building a Modern Computer from First Principles"/. MIT
-Press, 2008.
+
+<<bibliography link>>
+
+bibliographystyle:abbrv
+bibliography:~/Dropbox/bibliografias/references.bib
 
 * Footnotes
+
+[fn:5] [[https://github.com/luksamuk/cl-jackc]] 
 
 [fn:4] The compiler is actually built in more than two projects, as
 the rest of the toolchain (Assembler and VM Translator) is built in
