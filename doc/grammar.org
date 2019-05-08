@@ -25,8 +25,7 @@ interprets the grammar language.
 
 * Introduction
 
-# Missing stuff.
-Building programming languages are often an arduous, but fun task. Some
+Building programming languages is often an arduous, but fun task. Some
 of the work lies on the designing of the language and its syntactical
 elements /per se/. The rest of the work lies on building the tools
 to make the language work, namely the compiler toolchain. In this
@@ -64,7 +63,7 @@ and operation of this topmost grammar language are detailed as follows.
 
 * Grammars
 
-Newton (2006)cite:newton2006 states that a grammar is a formalism
+Vieira (2006)cite:newton2006 states that a grammar is a formalism
 originally conceived for defining formal languages. The fundamental
 elements of grammars are the /rules/, which demonstrate how to generate
 a language's /words/.

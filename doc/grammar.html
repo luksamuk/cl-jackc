@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-05-07 ter 15:50 -->
+<!-- 2019-05-07 ter 21:47 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title><code>cl-jackc</code>'s Grammar Language</title>
@@ -284,11 +284,11 @@ interprets the grammar language.
 </p>
 
 
-<div id="outline-container-orge2d841b" class="outline-2">
-<h2 id="orge2d841b"><span class="section-number-2">1</span> Introduction</h2>
+<div id="outline-container-org8558dde" class="outline-2">
+<h2 id="org8558dde"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-Building programming languages are often an arduous, but fun task. Some
+Building programming languages is often an arduous, but fun task. Some
 of the work lies on the designing of the language and its syntactical
 elements <i>per se</i>. The rest of the work lies on building the tools
 to make the language work, namely the compiler toolchain. In this
@@ -333,11 +333,11 @@ and operation of this topmost grammar language are detailed as follows.
 </div>
 </div>
 
-<div id="outline-container-org34c9762" class="outline-2">
-<h2 id="org34c9762"><span class="section-number-2">2</span> Grammars</h2>
+<div id="outline-container-org84c67c8" class="outline-2">
+<h2 id="org84c67c8"><span class="section-number-2">2</span> Grammars</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-Newton (2006)<a class='org-ref-reference' href="#newton2006">newton2006</a> states that a grammar is a formalism
+Vieira (2006)<a class='org-ref-reference' href="#newton2006">newton2006</a> states that a grammar is a formalism
 originally conceived for defining formal languages. The fundamental
 elements of grammars are the <i>rules</i>, which demonstrate how to generate
 a language's <i>words</i>.
@@ -416,8 +416,8 @@ is a <i>word</i> of the Jack <i>language</i> or not.
 </div>
 </div>
 
-<div id="outline-container-org36fb72a" class="outline-2">
-<h2 id="org36fb72a"><span class="section-number-2">3</span> Compiler's grammar syntax</h2>
+<div id="outline-container-org26544bd" class="outline-2">
+<h2 id="org26544bd"><span class="section-number-2">3</span> Compiler's grammar syntax</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 The compiler's grammar language is written using s-expressions, since
@@ -440,13 +440,13 @@ in.
 </p>
 
 <p>
-Figure <a href="#orga0f04fa">1</a> is a transcribed fragment of a single rule
+Figure <a href="#orgb30aada">1</a> is a transcribed fragment of a single rule
 for matching with a class structure of the Jack programming
 language. The rule is provided for illustrative purposes.
 </p>
 
 <div class="org-src-container">
-<label class="org-src-name"><span class="listing-number">Listing 1: </span>Rule for matching a class definition in the Jack language.</label><pre class="src src-lisp" id="orga0f04fa">(<span class="org-builtin">:class</span>   ((<span class="org-builtin">:keyword</span> <span class="org-string">"class"</span>) <span class="org-builtin">:class-name</span> (<span class="org-builtin">:symbol</span> <span class="org-string">"{"</span>)
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>Rule for matching a class definition in the Jack language.</label><pre class="src src-lisp" id="orgb30aada">(<span class="org-builtin">:class</span>   ((<span class="org-builtin">:keyword</span> <span class="org-string">"class"</span>) <span class="org-builtin">:class-name</span> (<span class="org-builtin">:symbol</span> <span class="org-string">"{"</span>)
            (<span class="org-builtin">:many</span> <span class="org-builtin">:class-var-dec</span>)
            (<span class="org-builtin">:many</span> <span class="org-builtin">:subroutine-dec</span>)
            (<span class="org-builtin">:symbol</span> <span class="org-string">"}"</span>)))
@@ -462,7 +462,7 @@ specified in the grammar itself.
 <p>
 Any valid Jack source code begins with a class definition, and so
 <code>:CLASS</code> corresponds to the starting point for the matching engine. The
-code snippet at Figure <a href="#orga0f04fa">1</a> offers a way to expect a class
+code snippet at Figure <a href="#orgb30aada">1</a> offers a way to expect a class
 definition in the Jack programming language (adapted from Nisan and
 Schocken (2005) <a class='org-ref-reference' href="#nand2tetris">nand2tetris</a>). To recognize a class, the grammar
 expects the match of a <i>precise</i> pattern, in the following order:
@@ -492,9 +492,9 @@ combination</i> for the rest of the rules.
 </p>
 </div>
 
-<div id="outline-container-orgffec286" class="outline-3">
-<h3 id="orgffec286">Atomic rules</h3>
-<div class="outline-text-3" id="text-orgffec286">
+<div id="outline-container-org10f7211" class="outline-3">
+<h3 id="org10f7211">Atomic rules</h3>
+<div class="outline-text-3" id="text-org10f7211">
 <p>
 A rule is atomic if it is comprised of a single keyword. These rules
 are of the same type of the rule <i>names</i>, as they are meant to be
@@ -535,9 +535,9 @@ further discussed in the following subsection.
 </div>
 </div>
 
-<div id="outline-container-org05a3098" class="outline-3">
-<h3 id="org05a3098">Compound rules</h3>
-<div class="outline-text-3" id="text-org05a3098">
+<div id="outline-container-org0f70c1a" class="outline-3">
+<h3 id="org0f70c1a">Compound rules</h3>
+<div class="outline-text-3" id="text-org0f70c1a">
 <p>
 Any list in the <i>match</i> element is a compound rule. Since the <i>match</i>
 element itself is a list comprised of several sub-rules, it is also
@@ -546,9 +546,9 @@ archetypes.
 </p>
 </div>
 
-<div id="outline-container-org13776ea" class="outline-4">
-<h4 id="org13776ea">Quantified rules</h4>
-<div class="outline-text-4" id="text-org13776ea">
+<div id="outline-container-orgcd588dc" class="outline-4">
+<h4 id="orgcd588dc">Quantified rules</h4>
+<div class="outline-text-4" id="text-orgcd588dc">
 <p>
 A <i>compound rule</i> is a <i>quantified rule</i> when its first element is a
 quantifier keyword. The quantifier changes the matching engine context
@@ -592,9 +592,9 @@ match results in failure.
 </div>
 </div>
 
-<div id="outline-container-org671fbfe" class="outline-4">
-<h4 id="org671fbfe">Exact-matches</h4>
-<div class="outline-text-4" id="text-org671fbfe">
+<div id="outline-container-org5edc4c0" class="outline-4">
+<h4 id="org5edc4c0">Exact-matches</h4>
+<div class="outline-text-4" id="text-org5edc4c0">
 <p>
 A <i>compound rule</i> is an <i>exact-match rule</i> when comprised of two elements,
 where its first element is an existing rule in the grammar, and the
@@ -618,19 +618,19 @@ rule, is considered to be syntactically incorrect.
 <p>
 A rule such as <code>(:KEYWORD "class")</code> is a well-defined <i>exact-match rule</i>,
 if and only if the grammar contains a rule as exemplified in Figure
-<a href="#org32aa85f">2</a>.
+<a href="#orga93985c">2</a>.
 </p>
 
 <div class="org-src-container">
-<label class="org-src-name"><span class="listing-number">Listing 2: </span>Example of a supporting rule for an <i>exact-match rule</i>.</label><pre class="src src-lisp" id="org32aa85f">(<span class="org-builtin">:KEYWORD</span>   ((<span class="org-builtin">:OR</span> <span class="org-string">"class"</span> <span class="org-string">"constructor"</span> <span class="org-string">"function"</span> ...)))
+<label class="org-src-name"><span class="listing-number">Listing 2: </span>Example of a supporting rule for an <i>exact-match rule</i>.</label><pre class="src src-lisp" id="orga93985c">(<span class="org-builtin">:KEYWORD</span>   ((<span class="org-builtin">:OR</span> <span class="org-string">"class"</span> <span class="org-string">"constructor"</span> <span class="org-string">"function"</span> ...)))
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgbdd1db7" class="outline-4">
-<h4 id="orgbdd1db7">Precise rules</h4>
-<div class="outline-text-4" id="text-orgbdd1db7">
+<div id="outline-container-orgdd33089" class="outline-4">
+<h4 id="orgdd33089">Precise rules</h4>
+<div class="outline-text-4" id="text-orgdd33089">
 <p>
 A <i>precise rule</i> is the commonest type of rule, as the <i>match</i>
 element of a rule definition often falls into it. Moreover, any
@@ -663,9 +663,9 @@ sequentially. Should any of them fail, then the whole group fails.
 </div>
 </div>
 
-<div id="outline-container-orgae74453" class="outline-3">
-<h3 id="orgae74453">Obligatory rules</h3>
-<div class="outline-text-3" id="text-orgae74453">
+<div id="outline-container-orgbdedd2f" class="outline-3">
+<h3 id="orgbdedd2f">Obligatory rules</h3>
+<div class="outline-text-3" id="text-orgbdedd2f">
 <p>
 As the matching engine was implemented, it was discovered that the
 structure needed to assume that certain rules were to be
@@ -687,13 +687,13 @@ other grammar rules.
 </p>
 
 <p>
-Figure <a href="#org718a560">3</a> is a snippet showing the Jack language's
+Figure <a href="#org02004c0">3</a> is a snippet showing the Jack language's
 keywords and symbols, based on the language's grammar specification
 (Nisan and Schocken (2008), pp. 208-209 <a class='org-ref-reference' href="#nand2tetris">nand2tetris</a>).
 </p>
 
 <div class="org-src-container">
-<label class="org-src-name"><span class="listing-number">Listing 3: </span>Keywords and symbols as defined for the Jack language.</label><pre class="src src-lisp" id="org718a560">(<span class="org-builtin">:keyword</span>  ((<span class="org-builtin">:or</span> <span class="org-string">"class"</span> <span class="org-string">"constructor"</span> <span class="org-string">"function"</span>
+<label class="org-src-name"><span class="listing-number">Listing 3: </span>Keywords and symbols as defined for the Jack language.</label><pre class="src src-lisp" id="org02004c0">(<span class="org-builtin">:keyword</span>  ((<span class="org-builtin">:or</span> <span class="org-string">"class"</span> <span class="org-string">"constructor"</span> <span class="org-string">"function"</span>
                  <span class="org-string">"method"</span> <span class="org-string">"field"</span> <span class="org-string">"static"</span> <span class="org-string">"var"</span>
                  <span class="org-string">"int"</span> <span class="org-string">"char"</span> <span class="org-string">"boolean"</span> <span class="org-string">"void"</span>
                  <span class="org-string">"true"</span> <span class="org-string">"false"</span> <span class="org-string">"null"</span> <span class="org-string">"this"</span> <span class="org-string">"let"</span>
@@ -707,9 +707,9 @@ keywords and symbols, based on the language's grammar specification
 </div>
 </div>
 
-<div id="outline-container-org9034209" class="outline-3">
-<h3 id="org9034209">Code commentary</h3>
-<div class="outline-text-3" id="text-org9034209">
+<div id="outline-container-orgb93490a" class="outline-3">
+<h3 id="orgb93490a">Code commentary</h3>
+<div class="outline-text-3" id="text-orgb93490a">
 <p>
 Comments in any language are often surrounded by two tokens, which are
 equivalent to text <i>terminals</i>. Comment detection, however, is not
@@ -746,8 +746,8 @@ is not informed, then that delimiter must be a <code>#\Newline</code> character.
 </div>
 </div>
 
-<div id="outline-container-orga644c5a" class="outline-2">
-<h2 id="orga644c5a"><span class="section-number-2">4</span> Rule composition</h2>
+<div id="outline-container-org84d7d58" class="outline-2">
+<h2 id="org84d7d58"><span class="section-number-2">4</span> Rule composition</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 The grammar language fundamentals have been outlined. <i>Terminals</i>,
@@ -758,14 +758,14 @@ important to discuss the language's <i>means of abstraction</i>.
 
 <p>
 Abstraction implies the building of structures which would allow the
-creation of the <i>rules</i> themselves. Figure <a href="#orga0f04fa">1</a> already hints
+creation of the <i>rules</i> themselves. Figure <a href="#orgb30aada">1</a> already hints
 at what is possible to make of the grammar language. For a better
 understanding, we should take a simpler example, as described in
-Figure <a href="#org294ba82">4</a>.
+Figure <a href="#org361c76f">4</a>.
 </p>
 
 <div class="org-src-container">
-<label class="org-src-name"><span class="listing-number">Listing 4: </span>Rule example for matching a variable declaration.</label><pre class="src src-lisp" id="org294ba82">(<span class="org-builtin">:var-decl</span>  (<span class="org-builtin">:type</span>
+<label class="org-src-name"><span class="listing-number">Listing 4: </span>Rule example for matching a variable declaration.</label><pre class="src src-lisp" id="org361c76f">(<span class="org-builtin">:var-decl</span>  (<span class="org-builtin">:type</span>
              <span class="org-builtin">:identifier</span>
              (<span class="org-builtin">:maybe</span> (<span class="org-builtin">:symbol</span> <span class="org-string">"="</span>)
                      <span class="org-builtin">:integer-constant</span>)
@@ -779,7 +779,7 @@ Figure <a href="#org294ba82">4</a>.
 </pre>
 </div>
 <p>
-The example outlined in Figure <a href="#org294ba82">4</a> is by no means
+The example outlined in Figure <a href="#org361c76f">4</a> is by no means
 practical, since there are more sophisticated ways of matching a
 variable declaration, but it should be enough for a brief
 explanation. Additionally, the obligatory <code>:SYMBOL</code> and <code>:KEYWORD</code> rules
@@ -788,12 +788,12 @@ were omitted, as they are potentially implied by context.
 
 <p>
 Suppose that the compiler reads a file which may contain many variable
-declarations, as exemplified in Figure <a href="#orge7d41dd">5</a>. We begin by
+declarations, as exemplified in Figure <a href="#org4c3e72f">5</a>. We begin by
 attempting to match the rule <code>:VAR-DECLS</code>.
 </p>
 
 <div class="org-src-container">
-<label class="org-src-name"><span class="listing-number">Listing 5: </span>Example of a potential input file for the matching engine.</label><pre class="src src-fundamental" id="orge7d41dd">int   foo        = 5;
+<label class="org-src-name"><span class="listing-number">Listing 5: </span>Example of a potential input file for the matching engine.</label><pre class="src src-fundamental" id="org4c3e72f">int   foo        = 5;
 char  downcase_a = 97;
 bool  false_val  = 0;
 float this_fails = 3;
@@ -814,7 +814,7 @@ engine.
 </p>
 
 <p>
-For the example given at Figure <a href="#orge7d41dd">5</a>, the match process would
+For the example given at Figure <a href="#org4c3e72f">5</a>, the match process would
 not fail with a syntax error. This is an undesided grammar runtime
 bug. The programmer could mitigate this problem with a <i>terminal</i> after
 the quantified variable declarations.
@@ -822,8 +822,8 @@ the quantified variable declarations.
 </div>
 </div>
 
-<div id="outline-container-org27e6736" class="outline-2">
-<h2 id="org27e6736"><span class="section-number-2">5</span> Conclusion</h2>
+<div id="outline-container-org7a5bee7" class="outline-2">
+<h2 id="org7a5bee7"><span class="section-number-2">5</span> Conclusion</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Grammar engines are certainly of great interest when designing a
@@ -863,7 +863,7 @@ foundation to one of my future projects.
 
 
 <p>
-<a id="org7d6e0ca"></a>
+<a id="org2a86e85"></a>
 </p>
 
 <p>
@@ -914,7 +914,7 @@ relate to grammatical rules themselves.
 <div id="postamble" class="status">
 <p class="author">Author: Lucas Vieira</p>
 <p class="email">Email: <a href="mailto:lucasvieira@protonmail.com">lucasvieira@protonmail.com</a></p>
-<p class="date">Created: 2019-05-07 ter 15:50</p>
+<p class="date">Created: 2019-05-07 ter 21:47</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
