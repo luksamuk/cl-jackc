@@ -158,7 +158,8 @@ other grammar rules.")
   "Checks if a certain RULE-LIST is an exact-match rule (a token-only rule followed
 by the expected token)."
   (and (= (list-length rule-list) 2)
-       (stringp (cadr rule-list))))
+       (or (stringp (cadr rule-list))
+	   (numberp (cadr rule-list)))))
 
 (defun compile-grammar (grammar-rules)
   "Compiles the grammar rules of a language, checking exact-match cases for

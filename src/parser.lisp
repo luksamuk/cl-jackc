@@ -22,20 +22,33 @@ Removes all quantifiers and some nested lists."
 	(t (cons (car syntax-tree)
 		 (cleanup-ast-1 (cdr syntax-tree))))))
 
+(defun depth-find-exact-match (element)
+  "Finds an exact match in depth at a certain element, which
+could be a list. If found, returns the extracted exact match."
+  (when (and (listp element)
+	     (= (list-length element) 2)
+	     (keywordp (car element)))
+    (if (exact-match-rule-p element)
+	element
+	(depth-find-exact-match (cadr element)))))
+
 (defun cleanup-ast-sublist-2 (sublist)
   "Helper for second pass of abstract tree cleanup.
 If an identifier match has been enclosed in a rule,
 removes such rule and leaves only the identifier."
-  (cond ((and (= (list-length sublist) 2)
-	      (listp (cadr sublist))
-	      (eql (caadr sublist) :identifier))
-	 (cleanup-ast-2 (cadr sublist)))
-	(t (cleanup-ast-2 sublist))))
+  (let ((find-result (depth-find-exact-match sublist)))
+    (cond (find-result find-result)
+	  ((and (= (list-length sublist) 1)
+		(listp (car sublist)))
+	   (cleanup-ast-2 (car sublist)))
+	  (t (cleanup-ast-2 sublist)))))
 
 (defun cleanup-ast-2 (syntax-tree)
   "Performs the second pass on cleaning an abstract syntax tree.
 Decouples identifier-only rules."
   (cond ((null syntax-tree) nil)
+	((null (car syntax-tree))
+	 (cleanup-ast-2 (cdr syntax-tree)))
 	((listp (car syntax-tree))
 	 (cons (cleanup-ast-sublist-2 (car syntax-tree))
 	       (cleanup-ast-2 (cdr syntax-tree))))

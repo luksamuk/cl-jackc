@@ -5,94 +5,6 @@
 
 (in-package #:cl-jackc/test)
 
-;; (defparameter *parser-expected-valid*
-;;   '(:class (:keyword "class") (:class-name (:identifier "Foo"))
-;;      (:symbol "{")
-;;      ((:class-var-dec (:keyword "static")   (:type (:keyword "int"))
-;;        (:var-name     (:identifier "a"))    (:symbol ";"))
-;;       (:class-var-dec (:keyword "field")
-;;        (:type         (:class-name (:identifier "String")))
-;;        (:var-name     (:identifier "name")) (:symbol ";")))
-     
-;;      ((:subroutine-dec       (:keyword "constructor")
-;;        (:type                (:class-name (:identifier "Foo")))
-;;        (:subroutine-name     (:identifier "new")) (:symbol "(")
-;;        (:parameter-list)     (:symbol ")")
-;;        (:subroutine-body     (:symbol "{")
-;; 	(:statements
-;; 	 (:statement
-;; 	  (:let-statement    (:keyword "let")
-;; 	   (:var-name        (:identifier "a")) (:symbol "=")
-;; 	   (:expression
-;; 	    ((:term (:var-name (:identifier "a")))
-;; 	     (((:op (:symbol "+")) (:term (:integer-constant 1))))))
-;; 	   (:symbol ";")))
-;; 	 (:statement
-;; 	  (:let-statement    (:keyword "let") (:var-name (:identifier "name"))
-;; 	   (:symbol "=")
-;; 	   (:expression      (:term (:string-constant "\"Hello!\"")))
-;; 	   (:symbol ";")))
-;; 	 (:statement
-;; 	  (:return-statement (:keyword "return")
-;; 	   ((:expression
-;; 	     (:term (:keyword-constant (:keyword "this")))))
-;; 	    (:symbol ";"))))
-;; 	(:symbol "}")))
-      
-;;       (:subroutine-dec          (:keyword "method") (:keyword "void")
-;;        (:subroutine-name        (:identifier "dispose")) (:symbol "(")
-;;        (:parameter-list)        (:symbol ")")
-;;        (:subroutine-body        (:symbol "{")
-;; 	(:statements
-;; 	 (:statement
-;; 	  (:do-statement        (:keyword "do")
-;; 	    (:subroutine-call
-;; 	     ((:class-name      (:identifier "Memory")) (:symbol ".")
-;; 	      (:subroutine-name (:identifier "deAlloc")) (:symbol "(")
-;; 	      (:expression-list
-;; 	       (:expression     (:term (:keyword-constant (:keyword "this"))))
-;; 	       nil)
-;; 	      (:symbol ")")))
-;; 	    (:symbol ";")))
-;; 	 (:statement (:return-statement (:keyword "return") (:symbol ";"))))
-;; 	(:symbol "}")))
-      
-;;       (:subroutine-dec (:keyword "method") (:keyword "void")
-;;        (:subroutine-name (:identifier "showName")) (:symbol "(")
-;;        (:parameter-list) (:symbol ")")
-;;        (:subroutine-body (:symbol "{")
-;; 	(:statements
-;; 	 (:statement
-;; 	  (:do-statement (:keyword "do")
-;; 	    (:subroutine-call
-;; 	     ((:class-name (:identifier "Output")) (:symbol ".")
-;; 	      (:subroutine-name (:identifier "printString")) (:symbol "(")
-;; 	      (:expression-list
-;; 	       (:expression
-;; 		(:term (:string-constant "\"Hello, my name is \"")))
-;; 	       nil)
-;; 	      (:symbol ")")))
-;; 	     (:symbol ";")))
-;; 	  (:statement
-;; 	   (:do-statement (:keyword "do")
-;; 	     (:subroutine-call
-;; 	      ((:class-name (:identifier "Output")) (:symbol ".")
-;; 	       (:subroutine-name (:identifier "printString")) (:symbol "(")
-;; 	       (:expression-list
-;; 		(:expression (:term (:var-name (:identifier "name")))) nil)
-;; 	      (:symbol ")")))
-;; 	     (:symbol ";")))
-;; 	  (:statement
-;; 	   (:do-statement (:keyword "do")
-;; 	     (:subroutine-call
-;; 	      ((:class-name (:identifier "Output")) (:symbol ".")
-;; 	       (:subroutine-name (:identifier "println")) (:symbol "(")
-;; 	       (:expression-list) (:symbol ")")))
-;; 	     (:symbol ";")))
-;; 	  (:statement (:return-statement (:keyword "return") (:symbol ";"))))
-;; 	(:symbol "}"))))
-;;      (:symbol "}")))
-
 (defparameter *parser-expected-valid*
   '(:class (:keyword "class") (:identifier "Foo")
      (:symbol "{")
@@ -180,24 +92,23 @@
       (ok (depth-equal-p (cleanup-ast (analyze one-static-classvar-stream))
 			 '(:class (:keyword "class") (:identifier "Bar")
 			   (:symbol "{")
-			   ((:class-var-dec (:keyword "static") (:type (:keyword "int"))
-			     (:identifier "baz") (:symbol ";")))
+			   (:class-var-dec (:keyword "static") (:keyword "int")
+			    (:identifier "baz") (:symbol ";"))
 			   (:symbol "}")))))
     (with-input-from-string (one-static-method-stream
 			     "class Bar { function void foo() { return; } }")
       (ok (depth-equal-p (cleanup-ast (analyze one-static-method-stream))
 			 '(:class (:keyword "class") (:identifier "Bar")
 			   (:symbol "{")
-			   ((:subroutine-dec (:keyword "function") (:keyword "void")
-			     (:identifier "foo") (:symbol "(") (:parameter-list)
-			     (:symbol ")")
-			     (:subroutine-body
-			      (:symbol "{")
-			      (:statements
-			       (:statement (:return-statement (:keyword "return")
-							      (:symbol ";"))))
-			      (:symbol "}"))))
-			   (:symbol "}"))))))
+			   (:subroutine-dec (:keyword "function") (:keyword "void")
+			    (:identifier "foo") (:symbol "(") (:parameter-list)
+			    (:symbol ")")
+			    (:subroutine-body (:symbol "{")
+			     (:statements
+			      (:statement (:return-statement (:keyword "return")
+							     (:symbol ";"))))
+			     (:symbol "}")))
+			 (:symbol "}"))))))
   (testing "valid.jack"
     (let ((ast (cleanup-ast (analyze (open (script-file "valid.jack"))))))
       (ok (depth-equal-p ast *parser-expected-valid*)))))
