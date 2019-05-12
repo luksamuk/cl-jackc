@@ -1,6 +1,6 @@
 .PHONY: clean
 
-all:
+all: grammar.pdf grammar.ps
 
 grammar.pdf: grammar.tex
 	latexmk -shell-escape -bibtex -f -pdf grammar.tex

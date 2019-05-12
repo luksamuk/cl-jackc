@@ -469,7 +469,7 @@ foundation to one of my future projects.
 <<bibliography link>>
 
 bibliographystyle:abbrv
-bibliography:~/Dropbox/bibliografias/references.bib
+bibliography:references.bib
 
 * Footnotes
 
