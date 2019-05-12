@@ -6,30 +6,29 @@
 (in-package #:cl-jackc/test)
 
 (defparameter *parser-expected-valid*
-  '(:class (:keyword "class") (:identifier "Foo")
-     (:symbol "{")
-    ((:class-var-dec (:keyword "static")   (:type (:keyword "int"))
+  '(:class (:keyword "class") (:identifier "Foo") (:symbol "{")
+    ((:class-var-dec (:keyword "static") (:keyword "int")
        (:identifier "a") (:symbol ";"))
-      (:class-var-dec (:keyword "field") (:type (:identifier "String"))
+      (:class-var-dec (:keyword "field") (:identifier "String")
        (:identifier "name") (:symbol ";")))
      
-    ((:subroutine-dec (:keyword "constructor") (:type (:identifier "Foo"))
+    ((:subroutine-dec (:keyword "constructor") (:identifier "Foo")
        (:identifier "new") (:symbol "(") (:parameter-list) (:symbol ")")
        (:subroutine-body (:symbol "{")
 	(:statements
 	 (:statement
 	  (:let-statement (:keyword "let") (:identifier "a") (:symbol "=")
 	   (:expression
-	    ((:term (:identifier "a"))
-	     (((:op (:symbol "+")) (:term (:integer-constant 1))))))
+	    ((:identifier "a")
+	     ((:symbol "+") (:integer-constant 1))))
 	   (:symbol ";")))
 	 (:statement
 	  (:let-statement (:keyword "let") (:identifier "name") (:symbol "=")
-	   (:expression (:term (:string-constant "\"Hello!\""))) (:symbol ";")))
+	   (:string-constant "\"Hello!\"") (:symbol ";")))
 	 (:statement
 	  (:return-statement (:keyword "return")
-	   ((:expression (:term (:keyword-constant (:keyword "this")))))
-	    (:symbol ";"))))
+	   (:expression (:keyword "this"))
+	   (:symbol ";"))))
 	(:symbol "}")))
       
       (:subroutine-dec (:keyword "method") (:keyword "void")
@@ -41,9 +40,7 @@
 	    (:subroutine-call
 	     ((:identifier "Memory") (:symbol ".") (:identifier "deAlloc")
 	      (:symbol "(")
-	      (:expression-list
-	       (:expression (:term (:keyword-constant (:keyword "this")))) nil)
-	      (:symbol ")")))
+	      (:expression-list (:keyword "this")) (:symbol ")")))
 	    (:symbol ";")))
 	 (:statement (:return-statement (:keyword "return") (:symbol ";"))))
 	(:symbol "}")))
@@ -58,8 +55,7 @@
 	     ((:identifier "Output") (:symbol ".") (:identifier "printString")
 	      (:symbol "(")
 	      (:expression-list
-	       (:expression (:term (:string-constant "\"Hello, my name is \"")))
-	       nil)
+	       (:string-constant "\"Hello, my name is \""))
 	      (:symbol ")")))
 	     (:symbol ";")))
 	  (:statement
@@ -67,8 +63,7 @@
 	     (:subroutine-call
 	      ((:identifier "Output") (:symbol ".") (:identifier "printString")
 	       (:symbol "(")
-	       (:expression-list (:expression (:term (:identifier "name"))) nil)
-	      (:symbol ")")))
+	       (:expression-list (:identifier "name")) (:symbol ")")))
 	     (:symbol ";")))
 	  (:statement
 	   (:do-statement (:keyword "do")
