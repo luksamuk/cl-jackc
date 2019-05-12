@@ -235,7 +235,7 @@ the unit tests:
 Below are links to more information related to this project.
 
 - [Portuguese] [[https://medium.com/@luksamuk/integrando-testes-autom%C3%A1ticos-para-common-lisp-com-docker-e-travis-ci-a3259a79a821][Integrando testes automáticos para Common Lisp com Docker e Travis CI]]
-- [English] ~cl-jackc~'s Grammar Language ([[doc/grammar.org][source]] / [[doc/grammar.pdf][pdf]] / [[doc/grammar.ps][ps]] / [[doc/grammar.html][html]])
+- [English] ~cl-jackc~'s Grammar Language ([[doc/grammar.org][Org]] / [[doc/grammar.tex][TeX]])
 
 * License
 

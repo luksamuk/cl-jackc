@@ -1,4 +1,4 @@
-% Created 2019-05-12 dom 01:22
+% Created 2019-05-12 dom 16:45
 % Intended LaTeX compiler: pdflatex
 \documentclass[a4paper,11pt,oneside]{article}
 \usepackage[utf8]{inputenc}
@@ -49,10 +49,10 @@ interprets the grammar language.
 
 
 \section{Introduction}
-\label{sec:org59b5bc0}
+\label{sec:org23607fe}
 
 Building programming languages is often an arduous, but fun task. Some
-of the work lies on the designing of the language and its syntactical
+of the work lies on designing the language and its syntactical
 elements. The rest of the work lies on building the tools
 to make the language work, namely the compiler toolchain. In this
 article, I discuss a fragment of the compiler toolchain for the Jack
@@ -90,7 +90,7 @@ underlying robust, simple and well-organized codebase. The formalisms
 and operation of this topmost grammar language are detailed as follows.
 
 \section{Grammars}
-\label{sec:org04da01d}
+\label{sec:orgcffa5d0}
 
 According to Vieira (2006)\cite{newton2006}, a grammar is a formalism
 originally conceived for defining formal languages. The fundamental
@@ -157,7 +157,7 @@ this analysis indicates whether the \emph{code} is a \emph{word} of the Jack
 \emph{language} or not.
 
 \section{Compiler's grammar syntax}
-\label{sec:org5b79daa}
+\label{sec:org38e6305}
 
 The compiler's grammar language is written using s-expressions, since
 the application itself is written in Common Lisp. The chosen language
@@ -177,7 +177,7 @@ double colon, so that they are agnostic to the namespace\footnote{For better und
 not technically correct from Common Lisp's point of view.} they're
 in.
 
-Figure \ref{org49203bf} is a transcribed fragment of a single rule
+Figure \ref{org86194f7} is a transcribed fragment of a single rule
 for matching with a class structure of the Jack programming
 language. The rule is provided for illustrative purposes.
 
@@ -187,7 +187,7 @@ language. The rule is provided for illustrative purposes.
            (:many :subroutine-dec)
            (:symbol "}")))
 \end{verbatim}
-\captionof{figure}{\label{org49203bf}
+\captionof{figure}{\label{org86194f7}
 Rule for matching a class definition in the Jack language.}
 \hfill \break
 
@@ -198,7 +198,7 @@ specified in the grammar itself.
 
 Any valid Jack source code begins with a class definition, and so
 \texttt{:CLASS} corresponds to the starting point for the matching engine. The
-code snippet at Figure \ref{org49203bf} offers a way to expect a class
+code snippet at Figure \ref{org86194f7} offers a way to expect a class
 definition in the Jack programming language (adapted from Nisan and
 Schocken (2005) \cite{nand2tetris}). To recognize a class, the grammar
 expects the match of a \emph{precise} pattern, in the following order:
@@ -223,7 +223,7 @@ which enumerate a single kind of \emph{primitive} and some \emph{means of
 combination} for the rest of the rules.
 
 \subsection*{Atomic rules}
-\label{sec:orgd5d6fbd}
+\label{sec:orgcdcd994}
 
 A rule is atomic if it is comprised of a single keyword. These rules
 are of the same type of the rule \emph{names}, as they are meant to be
@@ -256,7 +256,7 @@ position. However, the rule as a whole is not atomic, as will be
 further discussed in the following subsection.
 
 \subsection*{Compound rules}
-\label{sec:orgd5ef0d8}
+\label{sec:org956ab9b}
 
 Any list in the \emph{match} element is a compound rule. Since the \emph{match}
 element itself is a list comprised of several sub-rules, it is also
@@ -264,7 +264,7 @@ considered as a compound rule, in accordance to one of the following
 archetypes.
 
 \subsubsection*{Quantified rules}
-\label{sec:org97b9f29}
+\label{sec:org57b0856}
 
 A \emph{compound rule} is a \emph{quantified rule} when its first element is a
 quantifier keyword. The quantifier changes the matching engine context
@@ -300,7 +300,7 @@ integer constant. If the integer constant is also not found, then the
 match results in failure.
 
 \subsubsection*{Exact-matches}
-\label{sec:org6adf2c6}
+\label{sec:org1aac2ea}
 
 A \emph{compound rule} is an \emph{exact-match rule} when comprised of two elements,
 where its first element is an existing rule in the grammar, and the
@@ -318,16 +318,16 @@ rule, is considered to be syntactically incorrect.
 
 A rule such as \texttt{(:KEYWORD "class")} is a well-defined \emph{exact-match rule},
 if and only if the grammar contains a rule as exemplified in Figure
-\ref{org3517d26}.
+\ref{org5961207}.
 
 \begin{verbatim}
 (:KEYWORD   ((:OR "class" "constructor" "function" ...)))
 \end{verbatim}
-\captionof{figure}{\label{org3517d26}
+\captionof{figure}{\label{org5961207}
 Example of a supporting rule for an \emph{exact-match rule}.}
 
 \subsubsection*{Precise rules}
-\label{sec:org14ab56b}
+\label{sec:org273a64c}
 
 A \emph{precise rule} is the commonest type of rule, as the \emph{match}
 element of a rule definition often falls into it. Moreover, any
@@ -351,7 +351,7 @@ valid \emph{precise rule}. The grammar expects three sub-rules to be matched
 sequentially. Should any of them fail, then the whole group fails.
 
 \subsection*{Obligatory rules}
-\label{sec:org0cfb616}
+\label{sec:orge37a677}
 
 As the matching engine was implemented, it was discovered that the
 structure needed to assume that certain rules were to be
@@ -369,7 +369,7 @@ Keywords and symbols enumerate nothing less than the alphabet \(\Sigma\)
 of a language, and therefore act as the primary \emph{terminals} for any
 other grammar rules.
 
-Figure \ref{org1eb623e} is a snippet showing the Jack language's
+Figure \ref{org16545cc} is a snippet showing the Jack language's
 keywords and symbols, based on the language's grammar specification
 (Nisan and Schocken (2008), pp. 208-209 \cite{nand2tetris}).
 
@@ -384,11 +384,11 @@ keywords and symbols, based on the language's grammar specification
                  ";" "+" "-" "*" "/" "&" "|" "<"
                  ">" "=" "~")))
 \end{verbatim}
-\captionof{figure}{\label{org1eb623e}
+\captionof{figure}{\label{org16545cc}
 Keywords and symbols as defined for the Jack language.}
 
 \subsection*{Code commentary}
-\label{sec:org25189e5}
+\label{sec:org8db31ef}
 
 Comments in any language are often surrounded by two tokens, which are
 equivalent to text \emph{terminals}. Comment detection, however, is not
@@ -418,7 +418,7 @@ As for comments which end at a line break, a simple definition such as
 is not informed, then that delimiter must be a \texttt{\#\textbackslash{}Newline} character.
 
 \section{Rule composition}
-\label{sec:orga1ac63d}
+\label{sec:org999b74f}
 
 The grammar language fundamentals have been outlined. \emph{Terminals},
 \emph{exact-matches} and \emph{built-in rules} act as primitives, while other
@@ -426,10 +426,10 @@ The grammar language fundamentals have been outlined. \emph{Terminals},
 important to discuss the language's \emph{means of abstraction}.
 
 Abstraction implies the building of structures which would allow the
-creation of the \emph{rules} themselves. Figure \ref{org49203bf} already hints
+creation of the \emph{rules} themselves. Figure \ref{org86194f7} already hints
 at what is possible to make of the grammar language. For a better
 understanding, we should take a simpler example, as described in
-Figure \ref{orgd5bdfba}.
+Figure \ref{org6e555ad}.
 
 \begin{verbatim}
 (:var-decl  (:type
@@ -444,18 +444,18 @@ Figure \ref{orgd5bdfba}.
 
 (:var-decls ((:many :var-decl)))
 \end{verbatim}
-\captionof{figure}{\label{orgd5bdfba}
+\captionof{figure}{\label{org6e555ad}
 Rule example for matching a variable declaration.}
 \hfill \break
 
-The example outlined in Figure \ref{orgd5bdfba} is by no means
+The example outlined in Figure \ref{org6e555ad} is by no means
 practical, since there are more sophisticated ways of matching a
 variable declaration, but it should be enough for a brief
 explanation. Additionally, the obligatory \texttt{:SYMBOL} and \texttt{:KEYWORD} rules
 were omitted, as they are potentially deducible by context.
 
 Suppose that the compiler reads a file which may contain many variable
-declarations, as exemplified in Figure \ref{orgcfcfe23}. We begin by
+declarations, as exemplified in Figure \ref{orgcd24bbc}. We begin by
 attempting to match the rule \texttt{:VAR-DECLS}.
 
 \begin{verbatim}
@@ -464,7 +464,7 @@ char  downcase_a = 97;
 bool  false_val  = 0;
 float this_fails = 3;
 \end{verbatim}
-\captionof{figure}{\label{orgcfcfe23}
+\captionof{figure}{\label{orgcd24bbc}
 Example of a potential input file for the matching engine.}
 \hfill \break
 
@@ -478,13 +478,13 @@ definition of \texttt{:VAR-DECLS}, if no \texttt{:VAR-DECL} were matched, the wh
 match process would fail, and raise a condition in the matching
 engine.
 
-For the example given at Figure \ref{orgcfcfe23}, the match process would
+For the example given at Figure \ref{orgcd24bbc}, the match process would
 not fail with a syntax error. This is an undesided grammar runtime
 bug. The programmer could mitigate this problem with a \emph{terminal} after
 the quantified variable declarations.
 
 \section{Conclusion}
-\label{sec:org619ac7c}
+\label{sec:orgedd9eff}
 
 Grammar engines are certainly of great interest when designing a
 language, and so they often shape the way languages work to ensure
@@ -515,7 +515,7 @@ foundation to one of my future projects.
 
 
 
-\label{orgb7a5a06}
+\label{org5161960}
 
 \bibliographystyle{abbrv}
 \bibliography{../../../../Dropbox/bibliografias/references}

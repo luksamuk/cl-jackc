@@ -6,3 +6,6 @@
 *.fls
 *.log
 *.out
+*.pdf
+*.ps
+*.html
