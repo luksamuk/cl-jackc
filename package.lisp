@@ -5,8 +5,7 @@
 
 (defpackage #:jackc-utils
   (:use #:cl)
-  (:export #:if-let
-	   #:whitespace-p
+  (:export #:whitespace-p
 	   #:numeric-char-p)
   (:documentation
    "Utilities and miscellaneous structures for all other compiler modules,
@@ -30,6 +29,7 @@ usually related to language extension."))
 
 (defpackage #:cl-jackc
   (:use #:cl
+	#:alexandria
 	#:jackc-utils
 	#:jackc-conditions)
   (:export #:compile-exec)
@@ -39,6 +39,7 @@ interact with the compiler."))
 
 (defpackage #:jackc-tokenizer
   (:use #:cl
+	#:alexandria
 	#:jackc-utils
 	#:split-sequence
 	#:jackc-conditions)
@@ -90,6 +91,7 @@ console."))
 
 (defpackage #:jackc-reader
   (:use #:cl
+	#:alexandria
 	#:jackc-utils
 	#:jackc-conditions
 	#:jackc-analyzer

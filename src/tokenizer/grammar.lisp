@@ -213,11 +213,20 @@ validity. Generates a hash table with all the rules for faster consulting."
 				    (listp x)
 				    (listp (cadr x))
 				    (listp (caadr x))
-				    (eql (caaadr x) :or)))
+				    (eql (caaadr x) :or)
+				    ;; Best to handle repeated terminals here.
+				    (if (not (setp (cdaadr x) :test #'equal))
+					(grammar-error-condition
+					 (concatenate 'string
+						      "Obligatory rules cannot "
+						      "have repeated terminal "
+						      "strings."))
+					t)))
 			     (list (assoc :keyword rule-list)
-				   (assoc :symbol rule-list)))))) 
+				   (assoc :symbol rule-list))))))
 
-    ;; Ensure obligatory rules
+    ;; Ensure obligatory rules. Plus ensure that their terminal
+    ;; strings do not repeat.
     (unless (obligatory-rules-defined-p grammar-rules)
       (grammar-error-condition
        (format

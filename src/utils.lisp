@@ -5,15 +5,6 @@
 
 (in-package #:jackc-utils)
 
-(defmacro if-let (binding consequent alternative)
-  "Binds a BINDING. If the bound symbol has non-false value, executes
-CONSEQUENT; otherwise, executes ALTERNATIVE."
-  (destructuring-bind ((sym val)) binding
-    `(let ((,sym ,val))
-       (if ,sym
-	   ,consequent
-	   ,alternative))))
-
 (defun whitespace-p (character)
   "Checks whether CHARACTER is a whitespace character."
   (not (null
