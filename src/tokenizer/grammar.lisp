@@ -199,9 +199,43 @@ validity. Generates a hash table with all the rules for faster consulting."
 		when (listp rule)
 		do (if (exact-match-rule-p rule)
 		       (test-exact-match rule)
-		       (traverse-check-rules rule)))))
+		       (traverse-check-rules rule))))
+
+	   (builtin-rules-redefined-p (rule-list)
+	     (not (every #'null
+			 (mapcar (lambda (x) (assoc x rule-list))
+				 *builtin-rules*))))
+	   
+	   (obligatory-rules-defined-p (rule-list)
+	     (notany #'null
+		     (mapcar (lambda (x)
+			       (and (not (null x))
+				    (listp x)
+				    (listp (cadr x))
+				    (listp (caadr x))
+				    (eql (caaadr x) :or)))
+			     (list (assoc :keyword rule-list)
+				   (assoc :symbol rule-list)))))) 
+
+    ;; Ensure obligatory rules
+    (unless (obligatory-rules-defined-p grammar-rules)
+      (grammar-error-condition
+       (format
+	nil
+	"One or more obligatory rules missing.~%Please define :KEYWORD and :SYMBOL.")))
+
+    ;; Ensure no redefinition of built-in rules
+    (when (builtin-rules-redefined-p grammar-rules)
+      (grammar-error-condition
+       (format
+	nil
+	"One or more built-in rules were redefined.~%Ensure there are no rules such as ~a."
+	*builtin-rules*)))
     
+    ;; Check all exact-matches recursively
     (traverse-check-rules grammar-rules)
+
+    ;; Finally generate a hashtable of rules
     (loop with hashtable = (make-hash-table)
        for rule in grammar-rules
        do (setf (gethash (car rule) hashtable)

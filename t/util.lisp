@@ -6,7 +6,7 @@
 (in-package #:cl-jackc/test)
 
 (defparameter *system-pathname*
-  (asdf:system-source-directory :cl-jackc/test))
+  (asdf:system-source-directory :cl-jackc-test))
 
 (defun script-file (file-name)
   (merge-pathnames (concatenate 'string "t/scripts/" file-name)

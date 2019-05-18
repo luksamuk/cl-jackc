@@ -46,8 +46,6 @@ Raises a condition when any of the sub-rules are not a match."
      do (syntax-error-condition (line-number *the-head*)
 				(column-number *the-head*))))
 
-;; TODO: check if (token-class "token") is
-;; valid when compiling grammar into hashmap
 (defun match-exact (rule)
   "Matches an exact-match RULE. The RULE must be written in
 form (:KEYWORD \"token\")."
