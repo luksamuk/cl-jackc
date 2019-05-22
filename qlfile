@@ -1,3 +1,4 @@
 ql alexandria :latest
 ql split-sequence :latest
 ql rove :latest
+ql staple :latest
