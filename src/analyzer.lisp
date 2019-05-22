@@ -151,4 +151,4 @@ in s-expressions.
 This procedure may raise syntax-error and unexpected-eof
 conditions."
   (with-new-head (file-stream)
-    (match-rec *initial-var*)))
+    (match-rec (grammar-lookup :entry))))

@@ -12,10 +12,6 @@
   "Enumerates builtin lexical elements which are implemented on the matching
 engine.")
 
-(defparameter *initial-var* :class
-  "Determines the initial rule which the matcher should lookup at the beginning of
-every file.")
-
 (defparameter *grammar* nil
   "Holds the de-facto grammar used for lookup. Each grammar rule is the key to an
 element on a hash table, and matches exactly one rule list, which may also reference
@@ -144,23 +140,25 @@ validity. Generates a hash table with all the rules for faster consulting."
 				 *builtin-rules*))))
 	   
 	   (obligatory-rules-defined-p (rule-list)
-	     (notany #'null
-		     (mapcar (lambda (x)
-			       (and (not (null x))
-				    (listp x)
-				    (listp (cadr x))
-				    (listp (caadr x))
-				    (eql (caaadr x) :or)
-				    ;; Best to handle repeated terminals here.
-				    (if (not (setp (cdaadr x) :test #'equal))
-					(grammar-error-condition
-					 (concatenate 'string
-						      "Obligatory rules cannot "
-						      "have repeated terminal "
-						      "strings."))
-					t)))
-			     (list (assoc :keyword rule-list)
-				   (assoc :symbol rule-list))))))
+	     (and
+	      (notany #'null
+		      (mapcar (lambda (x)
+				(and (not (null x))
+				     (listp x)
+				     (listp (cadr x))
+				     (listp (caadr x))
+				     (eql (caaadr x) :or)
+				     ;; Best to handle repeated terminals here.
+				     (if (not (setp (cdaadr x) :test #'equal))
+					 (grammar-error-condition
+					  (concatenate 'string
+						       "Obligatory rules cannot "
+						       "have repeated terminal "
+						       "strings."))
+					 t)))
+			      (list (assoc :keyword rule-list)
+				    (assoc :symbol rule-list))))
+	      (not (null (assoc :entry rule-list))))))
 
     ;; Ensure obligatory rules. Plus ensure that their terminal
     ;; strings do not repeat.
@@ -168,7 +166,8 @@ validity. Generates a hash table with all the rules for faster consulting."
       (grammar-error-condition
        (format
 	nil
-	"One or more obligatory rules missing.~%Please define :KEYWORD and :SYMBOL.")))
+	"One or more obligatory rules missing.~%Please define ~a."
+	'(:keyword :symbol :entry))))
 
     ;; Ensure no redefinition of built-in rules
     (when (builtin-rules-redefined-p grammar-rules)

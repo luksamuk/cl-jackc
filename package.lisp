@@ -52,7 +52,6 @@ interact with the compiler."))
 	   #:*the-head*
 	   #:with-new-head
 	   #:grammar-lookup
-	   #:*initial-var*
 	   #:builtin-rule-p
 	   #:quantifier-p
 	   #:quantified-rule-p
