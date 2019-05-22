@@ -16,6 +16,8 @@
 			 ";" "+" "-" "*" "/" "&" "|" "<"
 			 ">" "=" "~")))
 
+(:comment          ((:or ("//") ("/*" "*/"))))
+
 
 ;;; Program structure
 (:class             ((:keyword "class") :class-name (:symbol "{")

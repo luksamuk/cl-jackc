@@ -154,12 +154,12 @@ HEAD are restored."
 		 nil)
 	       result))
 	   (head-in-comment-start-p (head)
-	     (loop for comment-pair in *comment-tokens*
+	     (loop for comment-pair in (grammar-get-comments)
 		thereis (head-in-token-noskip-p head (car comment-pair)))))
     (loop while (head-in-comment-start-p head)
-       do (loop for comment-pair in *comment-tokens*
+       do (loop for comment-pair in (grammar-get-comments)
 	       do (skip-comment (car comment-pair)
-				(or (cdr comment-pair)
+				(or (cadr comment-pair)
 				    (format nil "~%")))))))
 
 (defmethod head-next-nonseparator ((head tokenizer-head))

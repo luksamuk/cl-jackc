@@ -5,12 +5,6 @@
 
 (in-package #:jackc-tokenizer)
 
-
-(defparameter *comment-tokens* '(("//") ("/*" . "*/"))
-  "Enumerates a list of comment token pairs, where the first is the opening token,
-and the second is the closing token. If no closing token has been specified, then
-it is assumed to be the newline character.")
-
 (defvar *quantifiers*   '(:or :many :maybe)
   "Enumerates quantifiers for each rule.")
 
@@ -35,6 +29,16 @@ other grammar rules.")
       (declare (ignore unused))
       value)))
 
+(defun grammar-get-comments ()
+  "Looks up the :comment rule in the grammar and returns the tokens associated with
+it."
+  (if-let ((lookup-rule (grammar-lookup :comment)))
+    (and (listp lookup-rule)
+	 (= (list-length lookup-rule) 1)
+	 (listp (car lookup-rule))
+	 (eql (caar lookup-rule) :or)
+	 (cdar lookup-rule))))
+
 (defun builtin-rule-p (rule)
   "Checks if a certain grammar RULE is a built-in rule."
   (when (member rule *builtin-rules*) t))
@@ -53,6 +57,11 @@ by the expected token)."
   (and (= (list-length rule-list) 2)
        (or (stringp (cadr rule-list))
 	   (numberp (cadr rule-list)))))
+
+(defun comment-rule-p (rule-list)
+  "Checks if a certain RULE-LIST is a comment token definition."
+  (and (= (list-length rule-list) 2)
+       (eql (car rule-list) :comment)))
 
 (defun slurp-grammar-file (file-path)
   "Takes a grammar language file FILE-PATH, relative to project directory, and
@@ -105,13 +114,29 @@ validity. Generates a hash table with all the rules for faster consulting."
 			       (cadr rule)
 			       (car rule))))
 		     (t t))))
+
+	   (test-comment-rule (rule)
+	     (unless (and
+		      (listp (cadr rule))
+		      (= (list-length (cadr rule)) 1)
+		      (listp (caadr rule))
+		      (eql (caaadr rule) :or)
+		      (let ((comment-pairs (cdaadr rule)))
+			(loop for pair in comment-pairs
+			   always (and (listp pair)
+				       (loop for token in pair
+					  always (stringp token))))))
+	       (grammar-error-condition
+		"The COMMENT tokens rule is ill-defined.")))
 	   
 	   (traverse-check-rules (rule-list)
 	     (loop for rule in rule-list
 		when (listp rule)
-		do (if (exact-match-rule-p rule)
-		       (test-exact-match rule)
-		       (traverse-check-rules rule))))
+		do (cond ((exact-match-rule-p rule)
+			  (test-exact-match rule))
+			 ((comment-rule-p rule)
+			  (test-comment-rule rule))
+			 (t (traverse-check-rules rule)))))
 
 	   (builtin-rules-redefined-p (rule-list)
 	     (not (every #'null
