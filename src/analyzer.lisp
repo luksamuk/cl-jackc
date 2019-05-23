@@ -67,7 +67,8 @@ a condition, returns NIL."
   (head-checkpoint (*the-head*)
     (handler-case
 	(match-rec rule)
-      (syntax-error () nil))))
+      (syntax-error () nil)
+      (unexpected-eof () nil))))
 
 (defgeneric match-quantifier (quantifier rule-list)
   (:documentation "Matches a certain quantified rule, where
