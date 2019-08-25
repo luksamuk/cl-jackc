@@ -92,6 +92,19 @@ number currently held by the HEAD."))
 (defgeneric head-ff-nonseparator (head)
   (:documentation "Fast-forwards the HEAD to a non-whitespace character."))
 
+(defgeneric column-number (head)
+  (:documentation "Returns the current column number for a given HEAD."))
+
+(defgeneric (setf column-number) (pos head)
+  (:documentation "Sets the current column number of a given HEAD to
+POS. Should not be used directly."))
+
+(defgeneric line-number (head)
+  (:documentation "Returns the current line number for a given HEAD."))
+
+(defgeneric (setf line-number) (pos head)
+  (:documentation "Sets the current line number of a given HEAD to
+POS. Should not be used directly."))
 
 ;;; Macros
 

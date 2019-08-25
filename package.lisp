@@ -18,7 +18,6 @@ usually related to language extension."))
 	   #:unexpected-eof
 	   #:integer-overflow
 	   #:grammar-error
-	   #:print-object
 	   #:file-not-found-condition
 	   #:syntax-error-condition
 	   #:unexpected-eof-condition

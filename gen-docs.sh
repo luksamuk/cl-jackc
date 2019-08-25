@@ -1,4 +1,4 @@
 #!/bin/bash
 
-qlot exec ros run -e "(load \"extra/gen-docs.lisp\")" --quit
+qlot exec ros run -e "(load \"doc/gen-docs.lisp\")" --quit
 
