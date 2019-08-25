@@ -1,13 +1,13 @@
-#+TITLE: ~cl-jackc~'s Grammar Language
+#+TITLE:  A grammar language based on S-expressions
 #+AUTHOR: Lucas Vieira
-#+EMAIL: lucasvieira@protonmail.com
+#+EMAIL:  lucasvieira@protonmail.com
 #+LATEX_CLASS_OPTIONS: [a4paper,11pt,oneside]
 #+LaTeX_HEADER: \usepackage{lmodern}
 #+LaTeX_HEADER: \usepackage{microtype}
 #+LaTeX_HEADER: \usepackage{listings}
 #+LaTeX_HEADER: \usepackage{hyperref}
 #+LaTeX_HEADER: \usepackage{mathtools}
-#+LaTeX_HEADER: \usepackage{draftwatermark}
+# #+LaTeX_HEADER: \usepackage{draftwatermark}
 #+LaTeX_HEADER: \hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black, urlcolor=black}
 #+OPTIONS: toc:nil num:1 email:t footer:nil
 
@@ -31,9 +31,9 @@ of the work lies on designing the language and its syntactical
 elements. The rest of the work lies on building the tools
 to make the language work, namely the compiler toolchain. In this
 article, I discuss a fragment of the compiler toolchain for the Jack
-programming language, one of the projects proposed by Nisan and
-Schocken (2008) cite:nand2tetris, which is the parser for the syntax
-analysis of the Jack programming language.
+programming language, one of the projects proposed by
+cite:nand2tetris, which is the parser for the syntax analysis of the
+Jack programming language.
 
 The related book provides a very clear grammar for Jack, and so the
 job of the reader is to simply write a compiler for the language, in
@@ -41,20 +41,19 @@ two different projects[fn:4]. Here I show some of my strategies to
 build the first of the projects, despite having zero experience on
 writing compilers.
 
-Nisan and Schocken (2008) cite:nand2tetris provide a blueprint for the
+Nisan and Schocken cite:nand2tetris provide a blueprint for the
 project software architecture in the Java language, so that the job of
 the reader is sped up. This model, however, obeys certain principles
 of object-oriented design which describe a very rigid software
-architecture. Due to influence of Abelson and Sussman (1996)
-cite:sicp, when primarily thinking of what to do, I did not view the
-compiler architecture as a monolithic hierarchy of software modules,
-interacting with each other. Though the modularization is still
-maintained, mostly for file organization and for keeping some degree
-of similarity with the proposed implementation, the syntax analyzer
-was primarily designed as layers of software comprising of certain
-abstractions, as if each of these layers were /domain-specific
-languages/ themselves that could be used to build upper abstraction
-layers.
+architecture. Due to influence of cite:sicp, when primarily thinking
+of what to do, I did not view the compiler architecture as a
+monolithic hierarchy of software modules, interacting with each
+other. Though the modularization is still maintained, mostly for file
+organization and for keeping some degree of similarity with the
+proposed implementation, the syntax analyzer was primarily designed as
+layers of software comprising of certain abstractions, as if each of
+these layers were /domain-specific languages/ themselves that could be
+used to build upper abstraction layers.
 
 This approach led me to build a de-facto /domain-specific language/
 to represent the grammar of the Jack programming language in the
@@ -64,10 +63,10 @@ and operation of this topmost grammar language are detailed as follows.
 
 * Grammars
 
-According to Vieira (2006)cite:newton2006, a grammar is a formalism
-originally conceived for defining formal languages. The fundamental
-elements of grammars are the /rules/, which demonstrate how to generate
-a language's /words/.
+According to cite:newton2006, a grammar is a formalism originally
+conceived for defining formal languages. The fundamental elements of
+grammars are the /rules/, which demonstrate how to generate a language's
+/words/.
 
 Let there be a grammar $G$, which is a tuple $(V, \Sigma, R, P)$
 where:
@@ -117,14 +116,13 @@ it. Furthermore, it is only necessary to find and replace /variables/ in
 the /sentential form/, and never to analyze the disposition of
 /terminals/, since there are no /rules/ requiring this procedure.
 
-A grammar for the Jack language (Simon and Schocken, 2008)
-cite:nand2tetris is written using exactly this model. Each of the
-/rules/ are a simple pair, where the first component is a /variable/ which
-may appear anywhere, and so it can be transformed by another given
-rule of the grammar. Using this simple theorem, it is possible to
-write an application which takes a /source code/ and parses it, so that
-this analysis indicates whether the /code/ is a /word/ of the Jack
-/language/ or not.
+A grammar for the Jack language (see cite:nand2tetris) is written
+using exactly this model. Each of the /rules/ are a simple pair, where
+the first component is a /variable/ which may appear anywhere, and so it
+can be transformed by another given rule of the grammar. Using this
+simple theorem, it is possible to write an application which takes a
+/source code/ and parses it, so that this analysis indicates whether the
+/code/ is a /word/ of the Jack /language/ or not.
 
 * Compiler's grammar syntax
 
@@ -165,9 +163,9 @@ specified in the grammar itself.
 Any valid Jack source code begins with a class definition, and so
 ~:CLASS~ corresponds to the starting point for the matching engine. The
 code snippet at Figure [[fig:class_rule]] offers a way to expect a class
-definition in the Jack programming language (adapted from Nisan and
-Schocken (2005) cite:nand2tetris). To recognize a class, the grammar
-expects the match of a /precise/ pattern, in the following order:
+definition in the Jack programming language (adapted from
+cite:nand2tetris). To recognize a class, the grammar expects the match
+of a /precise/ pattern, in the following order:
 
 - An exact match with the keyword "~class~";
 - The class's name, whatever it may be;
@@ -177,7 +175,7 @@ expects the match of a /precise/ pattern, in the following order:
 - An exact match with the symbol ~}~.
 
 The matching engine works recursively, as it is suggested from the
-/wishful thinking/ approach (Abelson and Sussman (1996) cite:sicp).
+/wishful thinking/ approach (see cite:sicp).
 These operations (as well as the /match/ portion of the rule itself)
 require better clarification of their underlying structure.
 
@@ -208,8 +206,8 @@ they are enumerated as follows:
 Since matching these rules require knowledge of what a ~:SYMBOL~ and a
 ~:KEYWORD~ are, these rules must always be defined for any grammar. They
 can also be compared to the alphabet $\Sigma$ of a formal grammar
-(Vieira (2006) cite:newton2006). This aspect will be discussed later,
-in greater detail.
+(see cite:newton2006). This aspect will be discussed later, in greater
+detail.
 
 In a rule such as ~(:KEYWORD "class")~, the element ~"class"~ is a
 /terminal/, as it is raw text expected to be at the matching source code
@@ -317,14 +315,17 @@ which are common to most languages.
   /terminals/ of the language which are /language keywords/.
 - ~:SYMBOL~: A disjunctively-quantified rule enumerationg all text
   /terminals/ of the language which are /language symbols/.
+- =:ENTRY=: A special rule determining the entry point for the grammar;
+  in other words, where the parsing should start.
 
 Keywords and symbols enumerate nothing less than the alphabet $\Sigma$
 of a language, and therefore act as the primary /terminals/ for any
-other grammar rules.
+other grammar rules. As for the entry, it is the entry-point variable
+for any language.
 
 Figure [[fig:jack_obligatory]] is a snippet showing the Jack language's
-keywords and symbols, based on the language's grammar specification
-(Nisan and Schocken (2008), pp. 208-209 cite:nand2tetris).
+keywords, symbols and entry, based on the language's grammar
+specification (see cite:nand2tetris, pages 208-209).
 
 #+name: fig:jack_obligatory
 #+label: fig:jack_obligatory
@@ -339,34 +340,48 @@ keywords and symbols, based on the language's grammar specification
 (:symbol   ((:or "{" "}" "(" ")" "[" "]" "." ","
                  ";" "+" "-" "*" "/" "&" "|" "<"
                  ">" "=" "~")))
+
+(:entry    :class) ; every file contains a single class
 #+end_src
 
-** Code commentary
+** Optional rules
 
-Comments in any language are often surrounded by two tokens, which are
-equivalent to text /terminals/. Comment detection, however, is not
-considered part of the grammar rules, as they are treated as a
-responsibility of the tokenizer.
+There are two special meta-rules which affect the tokenization phase and
+the cleanup of the /abstract syntax tree/ phase, respectively.
 
-The matching engine's topmost structure is responsible for comparing
-tokens which are already assumed to be valid, and comment delimiters
-(plus the contents of any comment) are not supposed to be valid
-tokens. For that reason, the comments are defined using an outside
-structure, a list of pairs which enumerate the tokens enclosing any
-comments[fn:3].
+The =:COMMENT= rule determines pairs of delimiters for comments on the
+language. It is a disjunctively-quantified rule, where each element of
+the disjunction is a list of one or two strings. The first string must
+be a comment-opening token; the second one closes the comment opened
+by the first one. If the second string is absent, the grammar presumes
+that a /newline/ character ends the comment.
 
-Let us take the Jack programming language as an example, as the
-matching engine was primarily built for it. A pair, in Lisp notation,
-such as =("/*" . "*/")= shows that there may be comments in the source
-file, which begin with the token =/*= and end with the token =*/=. And
-so, the matching engine's head, which is supposed to point at every
-read character, will simply skip the undesired characters -- both the
-comment tokens and the text inbetween.
+The =:PHONY= rule determines rules which should not be embedded on the
+/abstract syntax tree/, when it is generated. Any rule name stated in
+this form will be stripped from the /abstract syntax tree/, /sans/ its
+nesting. The =:PHONY= rule nesting is also irrelevant, as its value is
+flattened by default.
 
-As for comments which end at a line break, a simple definition such as
-=("//")= suffices. This definition can also be written in the form
-=("//" . NIL)=, and so it implies that, when an end-of-comment delimiter
-is not informed, then that delimiter must be a =#\Newline= character.
+Figure [[fig:jack_optional]] highlights the comment tokens and the phony
+rules of Jack language's grammar. Notice that one of the tokens is a
+line comment, which ends with a /newline/ indicator.
+
+#+name: fig:jack_optional
+#+label: fig:jack_optional
+#+caption: Comment tokens and phony rules as defined for the Jack language.
+#+begin_src lisp
+(:comment          ((:or ("//") ("/*" "*/"))))
+
+(:phony            ((:statement
+                     :subroutine-call
+                     :class-name
+                     :subroutine-name
+                     :type
+                     :var-name
+                     :op
+                     :keyword-constant
+                     :unary-op)))
+#+end_src
 
 * Rule composition
 
@@ -396,6 +411,8 @@ Figure [[fig:var_example]].
                   (:keyword "bool"))))
 
 (:var-decls ((:many :var-decl)))
+
+(:entry     :var-decls)
 #+end_src
 #+LaTeX: \hfill \break
 
@@ -482,7 +499,7 @@ chapters prior to the compiler-related chapters.
 [fn:2] This choice was made due to Common Lisp's structure regarding
 /packages/, which are analogous to C libraries in some ways. A Lisp
 ~KEYWORD~ is agnostic to context, as it belongs to its own package,
-whereas the next obvious choice (a Lisp ~SYMBOL~) is not.
+whereas the next obvious choice (an unqualified Lisp ~SYMBOL~) is not.
 
 [fn:1]  For better understanding, the word /namespace/ was used, though
 not technically correct from Common Lisp's point of view.

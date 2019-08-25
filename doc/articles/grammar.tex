@@ -1,4 +1,4 @@
-% Created 2019-05-12 dom 17:06
+% Created 2019-08-25 dom 15:07
 % Intended LaTeX compiler: pdflatex
 \documentclass[a4paper,11pt,oneside]{article}
 \usepackage[utf8]{inputenc}
@@ -19,18 +19,17 @@
 \usepackage{listings}
 \usepackage{hyperref}
 \usepackage{mathtools}
-\usepackage{draftwatermark}
 \hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black, urlcolor=black}
 \setcounter{secnumdepth}{1}
 \author{Lucas Vieira\thanks{lucasvieira@protonmail.com}}
 \date{\today}
-\title{\texttt{cl-jackc}'s Grammar Language}
+\title{A grammar language based on S-expressions}
 \hypersetup{
  pdfauthor={Lucas Vieira},
- pdftitle={\texttt{cl-jackc}'s Grammar Language},
+ pdftitle={A grammar language based on S-expressions},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 26.2 (Org mode 9.2.2)}, 
+ pdfcreator={Emacs 26.2 (Org mode 9.2.5)}, 
  pdflang={English}}
 \begin{document}
 
@@ -49,16 +48,16 @@ interprets the grammar language.
 
 
 \section{Introduction}
-\label{sec:org8466d2e}
+\label{sec:org216dbda}
 
 Building programming languages is often an arduous, but fun task. Some
 of the work lies on designing the language and its syntactical
 elements. The rest of the work lies on building the tools
 to make the language work, namely the compiler toolchain. In this
 article, I discuss a fragment of the compiler toolchain for the Jack
-programming language, one of the projects proposed by Nisan and
-Schocken (2008) \cite{nand2tetris}, which is the parser for the syntax
-analysis of the Jack programming language.
+programming language, one of the projects proposed by
+\cite{nand2tetris}, which is the parser for the syntax analysis of the
+Jack programming language.
 
 The related book provides a very clear grammar for Jack, and so the
 job of the reader is to simply write a compiler for the language, in
@@ -68,20 +67,19 @@ chapters prior to the compiler-related chapters.}. Here I show some of my strate
 build the first of the projects, despite having zero experience on
 writing compilers.
 
-Nisan and Schocken (2008) \cite{nand2tetris} provide a blueprint for the
+Nisan and Schocken \cite{nand2tetris} provide a blueprint for the
 project software architecture in the Java language, so that the job of
 the reader is sped up. This model, however, obeys certain principles
 of object-oriented design which describe a very rigid software
-architecture. Due to influence of Abelson and Sussman (1996)
-\cite{sicp}, when primarily thinking of what to do, I did not view the
-compiler architecture as a monolithic hierarchy of software modules,
-interacting with each other. Though the modularization is still
-maintained, mostly for file organization and for keeping some degree
-of similarity with the proposed implementation, the syntax analyzer
-was primarily designed as layers of software comprising of certain
-abstractions, as if each of these layers were \emph{domain-specific
-languages} themselves that could be used to build upper abstraction
-layers.
+architecture. Due to influence of \cite{sicp}, when primarily thinking
+of what to do, I did not view the compiler architecture as a
+monolithic hierarchy of software modules, interacting with each
+other. Though the modularization is still maintained, mostly for file
+organization and for keeping some degree of similarity with the
+proposed implementation, the syntax analyzer was primarily designed as
+layers of software comprising of certain abstractions, as if each of
+these layers were \emph{domain-specific languages} themselves that could be
+used to build upper abstraction layers.
 
 This approach led me to build a de-facto \emph{domain-specific language}
 to represent the grammar of the Jack programming language in the
@@ -90,12 +88,12 @@ underlying robust, simple and well-organized codebase. The formalisms
 and operation of this topmost grammar language are detailed as follows.
 
 \section{Grammars}
-\label{sec:orga2264cc}
+\label{sec:org87e6550}
 
-According to Vieira (2006)\cite{newton2006}, a grammar is a formalism
-originally conceived for defining formal languages. The fundamental
-elements of grammars are the \emph{rules}, which demonstrate how to generate
-a language's \emph{words}.
+According to \cite{newton2006}, a grammar is a formalism originally
+conceived for defining formal languages. The fundamental elements of
+grammars are the \emph{rules}, which demonstrate how to generate a language's
+\emph{words}.
 
 Let there be a grammar \(G\), which is a tuple \((V, \Sigma, R, P)\)
 where:
@@ -147,17 +145,16 @@ it. Furthermore, it is only necessary to find and replace \emph{variables} in
 the \emph{sentential form}, and never to analyze the disposition of
 \emph{terminals}, since there are no \emph{rules} requiring this procedure.
 
-A grammar for the Jack language (Simon and Schocken, 2008)
-\cite{nand2tetris} is written using exactly this model. Each of the
-\emph{rules} are a simple pair, where the first component is a \emph{variable} which
-may appear anywhere, and so it can be transformed by another given
-rule of the grammar. Using this simple theorem, it is possible to
-write an application which takes a \emph{source code} and parses it, so that
-this analysis indicates whether the \emph{code} is a \emph{word} of the Jack
-\emph{language} or not.
+A grammar for the Jack language (see \cite{nand2tetris}) is written
+using exactly this model. Each of the \emph{rules} are a simple pair, where
+the first component is a \emph{variable} which may appear anywhere, and so it
+can be transformed by another given rule of the grammar. Using this
+simple theorem, it is possible to write an application which takes a
+\emph{source code} and parses it, so that this analysis indicates whether the
+\emph{code} is a \emph{word} of the Jack \emph{language} or not.
 
 \section{Compiler's grammar syntax}
-\label{sec:orge63604f}
+\label{sec:org08dad9c}
 
 The compiler's grammar language is written using s-expressions, since
 the application itself is written in Common Lisp. The chosen language
@@ -172,12 +169,12 @@ A grammar is a list of rules. Each rule is a pair of two elements: a
 \emph{Names} are Lisp keywords\footnote{This choice was made due to Common Lisp's structure regarding
 \emph{packages}, which are analogous to C libraries in some ways. A Lisp
 \texttt{KEYWORD} is agnostic to context, as it belongs to its own package,
-whereas the next obvious choice (a Lisp \texttt{SYMBOL}) is not.}, and therefore are prepended with a
+whereas the next obvious choice (an unqualified Lisp \texttt{SYMBOL}) is not.}, and therefore are prepended with a
 double colon, so that they are agnostic to the namespace\footnote{For better understanding, the word \emph{namespace} was used, though
 not technically correct from Common Lisp's point of view.} they're
 in.
 
-Figure \ref{org0f747ad} is a transcribed fragment of a single rule
+Figure \ref{org19274b7} is a transcribed fragment of a single rule
 for matching with a class structure of the Jack programming
 language. The rule is provided for illustrative purposes.
 
@@ -187,7 +184,7 @@ language. The rule is provided for illustrative purposes.
            (:many :subroutine-dec)
            (:symbol "}")))
 \end{verbatim}
-\captionof{figure}{\label{org0f747ad}
+\captionof{figure}{\label{org19274b7}
 Rule for matching a class definition in the Jack language.}
 \hfill \break
 
@@ -198,10 +195,10 @@ specified in the grammar itself.
 
 Any valid Jack source code begins with a class definition, and so
 \texttt{:CLASS} corresponds to the starting point for the matching engine. The
-code snippet at Figure \ref{org0f747ad} offers a way to expect a class
-definition in the Jack programming language (adapted from Nisan and
-Schocken (2005) \cite{nand2tetris}). To recognize a class, the grammar
-expects the match of a \emph{precise} pattern, in the following order:
+code snippet at Figure \ref{org19274b7} offers a way to expect a class
+definition in the Jack programming language (adapted from
+\cite{nand2tetris}). To recognize a class, the grammar expects the match
+of a \emph{precise} pattern, in the following order:
 
 \begin{itemize}
 \item An exact match with the keyword "\texttt{class}";
@@ -213,7 +210,7 @@ expects the match of a \emph{precise} pattern, in the following order:
 \end{itemize}
 
 The matching engine works recursively, as it is suggested from the
-\emph{wishful thinking} approach (Abelson and Sussman (1996) \cite{sicp}).
+\emph{wishful thinking} approach (see \cite{sicp}).
 These operations (as well as the \emph{match} portion of the rule itself)
 require better clarification of their underlying structure.
 
@@ -223,7 +220,7 @@ which enumerate a single kind of \emph{primitive} and some \emph{means of
 combination} for the rest of the rules.
 
 \subsection*{Atomic rules}
-\label{sec:orgbb90e50}
+\label{sec:orge9a292c}
 
 A rule is atomic if it is comprised of a single keyword. These rules
 are of the same type of the rule \emph{names}, as they are meant to be
@@ -247,8 +244,8 @@ for Lisp.
 Since matching these rules require knowledge of what a \texttt{:SYMBOL} and a
 \texttt{:KEYWORD} are, these rules must always be defined for any grammar. They
 can also be compared to the alphabet \(\Sigma\) of a formal grammar
-(Vieira (2006) \cite{newton2006}). This aspect will be discussed later,
-in greater detail.
+(see \cite{newton2006}). This aspect will be discussed later, in greater
+detail.
 
 In a rule such as \texttt{(:KEYWORD "class")}, the element \texttt{"class"} is a
 \emph{terminal}, as it is raw text expected to be at the matching source code
@@ -256,7 +253,7 @@ position. However, the rule as a whole is not atomic, as will be
 further discussed in the following subsection.
 
 \subsection*{Compound rules}
-\label{sec:org79713bd}
+\label{sec:orgd9c6ac8}
 
 Any list in the \emph{match} element is a compound rule. Since the \emph{match}
 element itself is a list comprised of several sub-rules, it is also
@@ -264,7 +261,7 @@ considered as a compound rule, in accordance to one of the following
 archetypes.
 
 \subsubsection*{Quantified rules}
-\label{sec:orgd88a04c}
+\label{sec:org2e8b2aa}
 
 A \emph{compound rule} is a \emph{quantified rule} when its first element is a
 quantifier keyword. The quantifier changes the matching engine context
@@ -300,7 +297,7 @@ integer constant. If the integer constant is also not found, then the
 match results in failure.
 
 \subsubsection*{Exact-matches}
-\label{sec:org5c62779}
+\label{sec:org80f529e}
 
 A \emph{compound rule} is an \emph{exact-match rule} when comprised of two elements,
 where its first element is an existing rule in the grammar, and the
@@ -318,16 +315,16 @@ rule, is considered to be syntactically incorrect.
 
 A rule such as \texttt{(:KEYWORD "class")} is a well-defined \emph{exact-match rule},
 if and only if the grammar contains a rule as exemplified in Figure
-\ref{orge8bdfd2}.
+\ref{org546656b}.
 
 \begin{verbatim}
 (:KEYWORD   ((:OR "class" "constructor" "function" ...)))
 \end{verbatim}
-\captionof{figure}{\label{orge8bdfd2}
+\captionof{figure}{\label{org546656b}
 Example of a supporting rule for an \emph{exact-match rule}.}
 
 \subsubsection*{Precise rules}
-\label{sec:org42c1161}
+\label{sec:org88b13ae}
 
 A \emph{precise rule} is the commonest type of rule, as the \emph{match}
 element of a rule definition often falls into it. Moreover, any
@@ -351,7 +348,7 @@ valid \emph{precise rule}. The grammar expects three sub-rules to be matched
 sequentially. Should any of them fail, then the whole group fails.
 
 \subsection*{Obligatory rules}
-\label{sec:orgf98d3ec}
+\label{sec:org14821c2}
 
 As the matching engine was implemented, it was discovered that the
 structure needed to assume that certain rules were to be
@@ -363,15 +360,18 @@ which are common to most languages.
 \emph{terminals} of the language which are \emph{language keywords}.
 \item \texttt{:SYMBOL}: A disjunctively-quantified rule enumerationg all text
 \emph{terminals} of the language which are \emph{language symbols}.
+\item \texttt{:ENTRY}: A special rule determining the entry point for the grammar;
+in other words, where the parsing should start.
 \end{itemize}
 
 Keywords and symbols enumerate nothing less than the alphabet \(\Sigma\)
 of a language, and therefore act as the primary \emph{terminals} for any
-other grammar rules.
+other grammar rules. As for the entry, it is the entry-point variable
+for any language.
 
-Figure \ref{orgabbcee6} is a snippet showing the Jack language's
-keywords and symbols, based on the language's grammar specification
-(Nisan and Schocken (2008), pp. 208-209 \cite{nand2tetris}).
+Figure \ref{org77ac5f8} is a snippet showing the Jack language's
+keywords, symbols and entry, based on the language's grammar
+specification (see \cite{nand2tetris}, pages 208-209).
 
 \begin{verbatim}
 (:keyword  ((:or "class" "constructor" "function"
@@ -383,42 +383,53 @@ keywords and symbols, based on the language's grammar specification
 (:symbol   ((:or "{" "}" "(" ")" "[" "]" "." ","
                  ";" "+" "-" "*" "/" "&" "|" "<"
                  ">" "=" "~")))
+
+(:entry    :class) ; every file contains a single class
 \end{verbatim}
-\captionof{figure}{\label{orgabbcee6}
+\captionof{figure}{\label{org77ac5f8}
 Keywords and symbols as defined for the Jack language.}
 
-\subsection*{Code commentary}
-\label{sec:orgd4c4a90}
+\subsection*{Optional rules}
+\label{sec:org632e829}
 
-Comments in any language are often surrounded by two tokens, which are
-equivalent to text \emph{terminals}. Comment detection, however, is not
-considered part of the grammar rules, as they are treated as a
-responsibility of the tokenizer.
+There are two special meta-rules which affect the tokenization phase and
+the cleanup of the \emph{abstract syntax tree} phase, respectively.
 
-The matching engine's topmost structure is responsible for comparing
-tokens which are already assumed to be valid, and comment delimiters
-(plus the contents of any comment) are not supposed to be valid
-tokens. For that reason, the comments are defined using an outside
-structure, a list of pairs which enumerate the tokens enclosing any
-comments\footnote{This is mostly an arbitrary choice, and the comments may be
-easily incorporated in the grammar. However, comments should not
-relate to grammatical rules themselves.}.
+The \texttt{:COMMENT} rule determines pairs of delimiters for comments on the
+language. It is a disjunctively-quantified rule, where each element of
+the disjunction is a list of one or two strings. The first string must
+be a comment-opening token; the second one closes the comment opened
+by the first one. If the second string is absent, the grammar presumes
+that a \emph{newline} character ends the comment.
 
-Let us take the Jack programming language as an example, as the
-matching engine was primarily built for it. A pair, in Lisp notation,
-such as \texttt{("/*" . "*/")} shows that there may be comments in the source
-file, which begin with the token \texttt{/*} and end with the token \texttt{*/}. And
-so, the matching engine's head, which is supposed to point at every
-read character, will simply skip the undesired characters -- both the
-comment tokens and the text inbetween.
+The \texttt{:PHONY} rule determines rules which should not be embedded on the
+\emph{abstract syntax tree}, when it is generated. Any rule name stated in
+this form will be stripped from the \emph{abstract syntax tree}, \emph{sans} its
+nesting. The \texttt{:PHONY} rule nesting is also irrelevant, as its value is
+flattened by default.
 
-As for comments which end at a line break, a simple definition such as
-\texttt{("//")} suffices. This definition can also be written in the form
-\texttt{("//" . NIL)}, and so it implies that, when an end-of-comment delimiter
-is not informed, then that delimiter must be a \texttt{\#\textbackslash{}Newline} character.
+Figure \ref{org55f8ab6} highlights the comment tokens and the phony
+rules of Jack language's grammar. Notice that one of the tokens is a
+line comment, which ends with a \emph{newline} indicator.
+
+\begin{verbatim}
+(:comment          ((:or ("//") ("/*" "*/"))))
+
+(:phony            ((:statement
+                     :subroutine-call
+                     :class-name
+                     :subroutine-name
+                     :type
+                     :var-name
+                     :op
+                     :keyword-constant
+                     :unary-op)))
+\end{verbatim}
+\captionof{figure}{\label{org55f8ab6}
+Comment tokens and phony rules as defined for the Jack language.}
 
 \section{Rule composition}
-\label{sec:org542dbc2}
+\label{sec:orgaf7e012}
 
 The grammar language fundamentals have been outlined. \emph{Terminals},
 \emph{exact-matches} and \emph{built-in rules} act as primitives, while other
@@ -426,10 +437,10 @@ The grammar language fundamentals have been outlined. \emph{Terminals},
 important to discuss the language's \emph{means of abstraction}.
 
 Abstraction implies the building of structures which would allow the
-creation of the \emph{rules} themselves. Figure \ref{org0f747ad} already hints
+creation of the \emph{rules} themselves. Figure \ref{org19274b7} already hints
 at what is possible to make of the grammar language. For a better
 understanding, we should take a simpler example, as described in
-Figure \ref{org1a21b61}.
+Figure \ref{org77ca5e2}.
 
 \begin{verbatim}
 (:var-decl  (:type
@@ -443,19 +454,21 @@ Figure \ref{org1a21b61}.
                   (:keyword "bool"))))
 
 (:var-decls ((:many :var-decl)))
+
+(:entry     :var-decls)
 \end{verbatim}
-\captionof{figure}{\label{org1a21b61}
+\captionof{figure}{\label{org77ca5e2}
 Rule example for matching a variable declaration.}
 \hfill \break
 
-The example outlined in Figure \ref{org1a21b61} is by no means
+The example outlined in Figure \ref{org77ca5e2} is by no means
 practical, since there are more sophisticated ways of matching a
 variable declaration, but it should be enough for a brief
 explanation. Additionally, the obligatory \texttt{:SYMBOL} and \texttt{:KEYWORD} rules
 were omitted, as they are potentially deducible by context.
 
 Suppose that the compiler reads a file which may contain many variable
-declarations, as exemplified in Figure \ref{orgc80c880}. We begin by
+declarations, as exemplified in Figure \ref{org3f4cd14}. We begin by
 attempting to match the rule \texttt{:VAR-DECLS}.
 
 \begin{verbatim}
@@ -464,7 +477,7 @@ char  downcase_a = 97;
 bool  false_val  = 0;
 float this_fails = 3;
 \end{verbatim}
-\captionof{figure}{\label{orgc80c880}
+\captionof{figure}{\label{org3f4cd14}
 Example of a potential input file for the matching engine.}
 \hfill \break
 
@@ -478,13 +491,13 @@ definition of \texttt{:VAR-DECLS}, if no \texttt{:VAR-DECL} were matched, the wh
 match process would fail, and raise a condition in the matching
 engine.
 
-For the example given at Figure \ref{orgc80c880}, the match process would
+For the example given at Figure \ref{org3f4cd14}, the match process would
 not fail with a syntax error. This is an undesided grammar runtime
 bug. The programmer could mitigate this problem with a \emph{terminal} after
 the quantified variable declarations.
 
 \section{Conclusion}
-\label{sec:orgc3ef327}
+\label{sec:org4fe67cc}
 
 Grammar engines are certainly of great interest when designing a
 language, and so they often shape the way languages work to ensure
@@ -515,7 +528,7 @@ foundation to one of my future projects.
 
 
 
-\label{org47dfedc}
+\label{orgf8faffd}
 
 \bibliographystyle{abbrv}
 \bibliography{references}
