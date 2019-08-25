@@ -101,4 +101,6 @@ to a string, in s-expression format."
 ;;; VM emitter (compilation case)
 
 (defun parse-as-vm (syntax-tree)
+  "Takes a syntax tree from the analyzer, then cleans it and generates
+Hack VM code. (NOT IMPLEMENTED!)"
   (error "Compilation not implemented!"))

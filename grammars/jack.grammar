@@ -16,11 +16,13 @@
 			 ";" "+" "-" "*" "/" "&" "|" "<"
 			 ">" "=" "~")))
 
-(:comment          ((:or ("//") ("/*" "*/"))))
-
 (:entry            :class)
 
+
+
 ;;; Optional rules
+(:comment          ((:or ("//") ("/*" "*/"))))
+
 (:phony            ((:statement
 		     :subroutine-call
 		     :class-name
