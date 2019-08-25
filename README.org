@@ -17,7 +17,7 @@ This compiler was completely written in Common Lisp.
 
 *Notice that this project is currently aiming to be Chapter-10-compliant-only.*
 This means that the compiler is, for now, only fit for analyzing ~.jack~
-files and outputting XML files for inspection.
+files and outputting XML files (optionally S-Expressions) for inspection.
 
 ** Qlot support
 
@@ -37,6 +37,23 @@ qlot install
 To use qlot along with SLIME on Emacs, see [[https://github.com/fukamachi/qlot][qlot]]'s repository
 documentation.
 
+*** Dependencies
+
+This project depends on a number of Common Lisp systems, which are
+specified below. All of them can are fetched from Quicklisp's main
+repository.
+
+Compilation and usage:
+- =alexandria=, =2017-08-30=
+- =split-sequence=, =2019-08-30=
+
+Unit tests:
+- =rove=, =2019-08-13=
+- =cxml=, =2019-08-13=
+
+Documentation:
+- =staple=, =2019-08-13=
+
 * Modularization
 This project takes a different approach when compared to other
 projects of the book ([[https://github.com/luksamuk/cl-hackasm][cl-hackasm]], [[https://github.com/luksamuk/cl-hackvmtr][cl-hackvmtr]]), with respect to its
@@ -48,11 +65,11 @@ Each one of the project's packages correspond to a certain module of
 the compiler. When doing this, instead of having separate binaries, we
 just make sure that the packages are minimalistic and serve their
 purpose explicitly. The user shall only interface with a single
-package, which depends on the other modules, and works as a frontend.
+package, which depends on the other modules and works as a frontend.
 
 ** Module listing
 
-- ~cl-jackc (interface)~
+- ~cl-jackc~ (interface)
 
   Default interface for compiler. Exports procedures so the user can
   interact with the compiler.
@@ -148,6 +165,13 @@ interleave arguments and paths when using the script.
 
 Passing no arguments shows a usage and help text.
 
+*UPDATE 2019-08-25:* At this date, the newest version of =alexandria= was
+broken on Quicklisp repositories and could not be properly
+loaded. This is why the unit testing now uses fixed versions for some
+systems. I cannot guarantee that these libraries will not break if you
+install them using plain Roswell; should anything happen, plese refer
+to the bundled script.
+
 ** Using the bundled script
 
 Given that Roswell and Qlot are installed, and that Qlot is correctly
@@ -194,6 +218,14 @@ folder of the source code.
 This project uses [[https://github.com/fukamachi/rove][rove]] for unit testing. For using it, a system
 called ~cl-jackc/test~ is provided, which includes a number of test
 suites for parts of the compiler.
+
+The test system is comprised of the following files:
+- =parser-test=, which contains tests for the whole analyzer, and
+  compares the exported ASTs;
+- =analyzer-test=, which contains tests for checking whether the
+  compilation runs without problems on valid files;
+- =tokenizer-test=, which tests for the ability of the tokenizer head to
+  find specific and rule-based tokens on a character stream.
 
 Tests also assume that you have ~qlot~ and ~roswell~ installed.
 
