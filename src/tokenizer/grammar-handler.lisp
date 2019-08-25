@@ -47,6 +47,7 @@ it."
   "Checks if a certain RULE-LIST is a quantified list of rules."
   (quantifier-p (car rule-list)))
 
+;; TODO: exact-matches must be stricted
 (defun exact-match-rule-p (rule-list)
   "Checks if a certain RULE-LIST is an exact-match rule (a token-only rule followed
 by the expected token)."

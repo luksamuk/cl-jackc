@@ -7,59 +7,22 @@
 
 ;;; Syntax tree cleanup
 
-(defun cleanup-ast-1 (syntax-tree)
-  "Performs the first pass on cleaning an abstract syntax tree.
-Removes all quantifiers and some nested lists."
-  (cond ((null syntax-tree) nil)
-	((listp (car syntax-tree))
-	 (cons (if (and (listp (caar syntax-tree))
-			(= (list-length (car syntax-tree)) 1))
-		   (cleanup-ast-1 (caar syntax-tree))
-		   (cleanup-ast-1 (car syntax-tree)))
-	       (cleanup-ast-1 (cdr syntax-tree))))
-	((quantifier-p (car syntax-tree))
-	 (cleanup-ast-1 (cdr syntax-tree)))
-	(t (cons (car syntax-tree)
-		 (cleanup-ast-1 (cdr syntax-tree))))))
-
-(defun depth-find-exact-match (element)
-  "Finds an exact match in depth at a certain element, which
-could be a list. If found, returns the extracted exact match."
-  (when (and (listp element)
-	     (= (list-length element) 2)
-	     (keywordp (car element)))
-    (if (exact-match-rule-p element)
-	element
-	(depth-find-exact-match (cadr element)))))
-
-(defun cleanup-ast-sublist-2 (sublist)
-  "Helper for second pass of abstract tree cleanup.
-If an identifier match has been enclosed in a rule,
-removes such rule and leaves only the identifier."
-  (let ((find-result (depth-find-exact-match sublist)))
-    (cond (find-result find-result)
-	  ((and (= (list-length sublist) 1)
-		(listp (car sublist)))
-	   (cleanup-ast-2 (car sublist)))
-	  (t (cleanup-ast-2 sublist)))))
-
-(defun cleanup-ast-2 (syntax-tree)
-  "Performs the second pass on cleaning an abstract syntax tree.
-Decouples identifier-only rules."
-  (cond ((null syntax-tree) nil)
-	((null (car syntax-tree))
-	 (cleanup-ast-2 (cdr syntax-tree)))
-	((listp (car syntax-tree))
-	 (cons (cleanup-ast-sublist-2 (car syntax-tree))
-	       (cleanup-ast-2 (cdr syntax-tree))))
-	(t (cons (car syntax-tree)
-		 (cleanup-ast-2 (cdr syntax-tree))))))
+(defparameter *removed-tags*
+  '(:statement :subroutine-call :class-name :many :maybe :subroutine-name
+    :type :var-name :op))
 
 (defun cleanup-ast (syntax-tree)
   "Cleans a certain abstract syntax tree coming from the analyzer
 module."
-  (cleanup-ast-2 (cleanup-ast-1 syntax-tree)))
-
+  (cond ((null syntax-tree) nil)
+	((or (null (car syntax-tree))
+	     (member (car syntax-tree) *removed-tags*))
+	 (cleanup-ast (cdr syntax-tree)))
+	((listp (car syntax-tree))
+	 (cons (cleanup-ast (car syntax-tree))
+	       (cleanup-ast (cdr syntax-tree))))
+	(t (cons (car syntax-tree)
+		 (cleanup-ast (cdr syntax-tree))))))
 
 
 ;;; XML emitter (analysis-only case)
@@ -85,32 +48,35 @@ CLOSINGP informs whether it is a closing XML tag."
   (when closingp (princ #\/))
   (princ (camelcase-keyword keyword))
   (princ #\>)
-  (unless closingp (princ #\Space)))
+  (unless closingp (princ #\Space))
+  (terpri))
 
 (defun remove-quotes-strconst (string)
   "Takes the STRING of a string constant match and removes surrounding
 quotes."
   (subseq string 1 (1- (length string))))
 
-(defun ast->xml (clean-ast)
-  "Takes a clean abstract syntax tree and prints a XML version of it to
-the standard output."
-  (cond ((null clean-ast) nil)
-	((keywordp (car clean-ast))
-	 (print-xml-tag (car clean-ast) nil)
-	 (ast->xml (cdr clean-ast))
-	 (print-xml-tag (car clean-ast) t))
-	((listp (car clean-ast))
-	 (if (and (exact-match-rule-p (car clean-ast))
-		  (eql (caar clean-ast) :string-constant))
-	     (ast->xml (list :string-constant
-			     (remove-quotes-strconst (cadar clean-ast))))
-	     (ast->xml (car clean-ast)))
-	 (ast->xml (cdr clean-ast)))
-	(t (princ (car clean-ast))
-	   (ast->xml (cdr clean-ast)))))
-		  
 
+(defun ast->xml (ast)
+    "Takes a clean abstract syntax tree and prints a XML version of it to
+the standard output."
+  (cond ((null ast) nil)
+	((keywordp (car ast))
+	 (print-xml-tag (car ast) nil)
+	 (ast->xml (cdr ast))
+	 (print-xml-tag (car ast) t))
+	((listp (car ast))
+	 (ast->xml (car ast))
+	 (ast->xml (cdr ast)))
+	((stringp (car ast))
+	 (cond ((string= (car ast) "<")
+		(princ " &lt; "))
+	       ((string= (car ast) ">")
+		(princ " &gt; "))
+	       (t (princ (string-trim "\"" (car ast)))))
+	 (ast->xml (cdr ast)))
+	(t (princ (car ast))
+	   (ast->xml (cdr ast)))))
 
 (defun parse-as-xml (syntax-tree)
   "Takes a syntax tree from the analyzer, then cleans it and prints it

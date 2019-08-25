@@ -9,4 +9,6 @@
 	#:jackc-tokenizer
 	#:jackc-analyzer
 	#:jackc-parser
-	#:rove))
+	#:rove
+	#:cxml
+	#:cxml-xmls))

@@ -9,7 +9,7 @@
   :license "MIT"
   :version "0.4.5"
   :serial t
-  :depends-on (#:cl-jackc #:rove)
+  :depends-on (#:cl-jackc #:rove #:cxml)
   :components ((:module "t"
 			:components ((:file "package")
 				     (:file "util")

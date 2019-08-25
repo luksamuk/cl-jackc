@@ -16,16 +16,16 @@
        (:identifier "new") (:symbol "(") (:parameter-list) (:symbol ")")
        (:subroutine-body (:symbol "{")
 	(:statements
-	 (:statement
+	 (
 	  (:let-statement (:keyword "let") (:identifier "a") (:symbol "=")
 	   (:expression
 	    ((:identifier "a")
 	     ((:symbol "+") (:integer-constant 1))))
 	   (:symbol ";")))
-	 (:statement
+	 (
 	  (:let-statement (:keyword "let") (:identifier "name") (:symbol "=")
 	   (:string-constant "\"Hello!\"") (:symbol ";")))
-	 (:statement
+	 (
 	  (:return-statement (:keyword "return")
 	   (:expression (:keyword "this"))
 	   (:symbol ";"))))
@@ -35,21 +35,21 @@
        (:identifier "dispose") (:symbol "(") (:parameter-list) (:symbol ")")
        (:subroutine-body (:symbol "{")
 	(:statements
-	 (:statement
+	 (
 	  (:do-statement (:keyword "do")
 	    (:subroutine-call
 	     ((:identifier "Memory") (:symbol ".") (:identifier "deAlloc")
 	      (:symbol "(")
 	      (:expression-list (:keyword "this")) (:symbol ")")))
 	    (:symbol ";")))
-	 (:statement (:return-statement (:keyword "return") (:symbol ";"))))
+	 ((:return-statement (:keyword "return") (:symbol ";"))))
 	(:symbol "}")))
       
       (:subroutine-dec (:keyword "method") (:keyword "void")
        (:identifier "showName") (:symbol "(") (:parameter-list) (:symbol ")")
        (:subroutine-body (:symbol "{")
 	(:statements
-	 (:statement
+	 (
 	  (:do-statement (:keyword "do")
 	    (:subroutine-call
 	     ((:identifier "Output") (:symbol ".") (:identifier "printString")
@@ -58,20 +58,20 @@
 	       (:string-constant "\"Hello, my name is \""))
 	      (:symbol ")")))
 	     (:symbol ";")))
-	  (:statement
+	  (
 	   (:do-statement (:keyword "do")
 	     (:subroutine-call
 	      ((:identifier "Output") (:symbol ".") (:identifier "printString")
 	       (:symbol "(")
 	       (:expression-list (:identifier "name")) (:symbol ")")))
 	     (:symbol ";")))
-	  (:statement
+	  (
 	   (:do-statement (:keyword "do")
 	     (:subroutine-call
 	      ((:identifier "Output") (:symbol ".") (:identifier "println")
 	       (:symbol "(") (:expression-list) (:symbol ")")))
 	     (:symbol ";")))
-	  (:statement (:return-statement (:keyword "return") (:symbol ";"))))
+	  ((:return-statement (:keyword "return") (:symbol ";"))))
 	(:symbol "}"))))
      (:symbol "}")))
 
@@ -100,10 +100,32 @@
 			    (:symbol ")")
 			    (:subroutine-body (:symbol "{")
 			     (:statements
-			      (:statement (:return-statement (:keyword "return")
+			      ((:return-statement (:keyword "return")
 							     (:symbol ";"))))
 			     (:symbol "}")))
 			 (:symbol "}"))))))
   (testing "valid.jack"
     (let ((ast (cleanup-ast (analyze (open (script-file "valid.jack"))))))
       (ok (depth-equal-p ast *parser-expected-valid*)))))
+
+
+;;;; Pertinent to file compilation testing. 
+
+(defun load-xml-file (filename)
+  (parse-file filename (make-xmls-builder)))
+
+(defun clean-parsed (tree)
+  (cond ((stringp (car tree))
+	 (let ((trimmed (string-trim '(#\Space #\Newline #\Tab) (car tree))))
+	   (if (string= trimmed "")
+	       (clean-parsed (cdr tree))
+	       (cons trimmed
+		     (clean-parsed (cdr tree))))))
+	((and (null (car tree))
+	      (null (cdr tree)))
+	 nil)
+	((listp (car tree))
+	 (cons (clean-parsed (car tree))
+	       (clean-parsed (cdr tree))))
+	(t (cons (car tree)
+		 (clean-parsed (cdr tree))))))
