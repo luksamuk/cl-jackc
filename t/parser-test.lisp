@@ -83,8 +83,8 @@
 (defmacro build-xml-test-case (filename)
   `(equal (load-xml-string
 	   (parse-as-xml
-	    (cleanup-ast (analyze (open ,(book-file filename))))))
-	  (load-xml-file ,(book-file filename t))))
+	    (cleanup-ast (analyze (open (book-file ,filename))))))
+	  (load-xml-file (book-file ,filename t))))
 
 (defun export-xmls-as-sexps-for-diff (casefile &optional (out-path "~/"))
   "Test function which exports a test file and its XML expected output as
