@@ -20,6 +20,17 @@
 
 (:entry            :class)
 
+;;; Optional rules
+(:phony            ((:statement
+		     :subroutine-call
+		     :class-name
+		     :subroutine-name
+		     :type
+		     :var-name
+		     :op
+		     :keyword-constant
+		     :unary-op)))
+
 
 ;;; Program structure
 (:class             ((:keyword "class") :class-name (:symbol "{")

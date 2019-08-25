@@ -6,12 +6,11 @@
 (in-package #:jackc-parser)
 
 ;;; Syntax tree cleanup
-
 (defparameter *removed-tags*
-  '(:statement :subroutine-call :class-name :many :maybe :subroutine-name
-    :type :var-name :op :keyword-constant :unary-op)
+  (append (alexandria:flatten (grammar-lookup :phony))
+	  '(:many :maybe :or))
   "Collection of tags which should be removed when exporting the AST to
-any format.")
+any format. Automatically includes quantifiers.")
 
 (defun cleanup-ast (syntax-tree)
   "Cleans a certain abstract syntax tree coming from the analyzer
