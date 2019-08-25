@@ -9,7 +9,7 @@
 
 (defparameter *removed-tags*
   '(:statement :subroutine-call :class-name :many :maybe :subroutine-name
-    :type :var-name :op))
+    :type :var-name :op :keyword-constant :unary-op))
 
 (defun cleanup-ast (syntax-tree)
   "Cleans a certain abstract syntax tree coming from the analyzer
@@ -73,6 +73,8 @@ the standard output."
 		(princ " &lt; "))
 	       ((string= (car ast) ">")
 		(princ " &gt; "))
+	       ((string= (car ast) "&")
+		(princ " &amp; "))
 	       (t (princ (string-trim "\"" (car ast)))))
 	 (ast->xml (cdr ast)))
 	(t (princ (car ast))
