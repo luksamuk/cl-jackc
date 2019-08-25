@@ -9,7 +9,9 @@
 
 (defparameter *removed-tags*
   '(:statement :subroutine-call :class-name :many :maybe :subroutine-name
-    :type :var-name :op :keyword-constant :unary-op))
+    :type :var-name :op :keyword-constant :unary-op)
+  "Collection of tags which should be removed when exporting the AST to
+any format.")
 
 (defun cleanup-ast (syntax-tree)
   "Cleans a certain abstract syntax tree coming from the analyzer
