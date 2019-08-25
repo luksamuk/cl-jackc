@@ -7,7 +7,7 @@
   :description "Test system for cl-jackc Jack compiler"
   :author "Lucas Vieira <lucasvieira@protonmail.com>"
   :license "MIT"
-  :version "0.4.5"
+  :version "0.5"
   :serial t
   :depends-on (#:cl-jackc #:rove #:cxml)
   :components ((:module "t"

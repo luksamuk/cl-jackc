@@ -7,7 +7,7 @@
   :description "Jack compiler for the nand2tetris Hack platform."
   :author "Lucas Vieira <lucasvieira@protonmail.com>"
   :license  "MIT"
-  :version "0.4.8"
+  :version "0.5"
   :serial t
   :depends-on (#:alexandria #:split-sequence)
   :components ((:file "package")
