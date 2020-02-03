@@ -1,4 +1,4 @@
-language: common lisp
+language: common-lisp
 
 services:
     - docker
