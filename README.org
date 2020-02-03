@@ -15,9 +15,8 @@ is what this project is.
 
 This compiler was completely written in Common Lisp.
 
-*Notice that this project is currently aiming to be Chapter-10-compliant-only.*
-This means that the compiler is, for now, only fit for analyzing ~.jack~
-files and outputting XML files (optionally S-Expressions) for inspection.
+*This software is beta quality*, and is currently on its road to perform
+full compilations of Jack programs for Chapter 11 compliance.
 
 ** Qlot support
 
@@ -55,6 +54,7 @@ Documentation:
 - =staple=, =2019-08-13=
 
 * Modularization
+
 This project takes a different approach when compared to other
 projects of the book ([[https://github.com/luksamuk/cl-hackasm][cl-hackasm]], [[https://github.com/luksamuk/cl-hackvmtr][cl-hackvmtr]]), with respect to its
 organization. The book talks about compiler modules, and so the

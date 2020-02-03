@@ -7,3 +7,4 @@ system-index.txt
 quicklisp/
 qlfile.lock
 
+.qlot/
